@@ -1,6 +1,6 @@
 # Hyderabad Urban Observatory — Stories
 
-The Stories site of the Hyderabad Urban Observatory (https://stories.hyderabad.urbanobservatory.in):
+The Stories site of the Hyderabad Urban Observatory (https://hyderabad.urbanobservatory.in/stories):
 the stories & datasets cards (theme-filterable) and the story pages: Hyderabad's forgotten
 waterscapes, Kancha Gachibowli forest change analysis, GHMC ward-level census (Flourish embed).
 React 19 + Vite + Ant Design, no backend. Built by GitHub Actions and published to GitHub Pages.
@@ -10,8 +10,8 @@ The Observatory's web presence is three small sites that share one look:
 | Site | Repo | Content |
 |---|---|---|
 | https://hyderabad.urbanobservatory.in | `site` | home (HMDA terrain), About, Disclaimer; redirects of old `/explore/…` and `/stories/…` addresses |
-| https://tools.hyderabad.urbanobservatory.in | `tools` | the tool cards |
-| https://stories.hyderabad.urbanobservatory.in | `stories` (this repo) | the stories & datasets cards and the story pages |
+| https://hyderabad.urbanobservatory.in/tools | `tools` | the tool cards |
+| https://hyderabad.urbanobservatory.in/stories | `stories` (this repo) | the stories & datasets cards and the story pages |
 
 The shared pieces (header, footer, logo, cards, filter bubbles, not-found page, `links.js`, `mapsEmbed.js`,
 `styles/index.css`, fonts, favicon) are **copied** into each repo rather than packaged: three
@@ -32,11 +32,11 @@ npm run build      # dist/ (postbuild copies index.html to 404.html for SPA deep
 |---------------------|----------------------------------------------------|---------|
 | `VITE_BASE`         | `/`                                                | Path the site is served from. |
 | `VITE_SITE_URL`     | `https://hyderabad.urbanobservatory.in`            | Main site: header brand, About, Disclaimer. |
-| `VITE_TOOLS_URL`    | `https://tools.hyderabad.urbanobservatory.in/`     | Tools site (header nav). |
-| `VITE_STORIES_URL`  | `https://stories.hyderabad.urbanobservatory.in/`   | This site (header nav). |
-| `VITE_MAPS_URL`     | `https://maps.hyderabad.urbanobservatory.in`       | Spatial Data Repository (map viewer): links in the waterscapes story. |
-| `VITE_TIMELINE_URL` | `https://timeline.hyderabad.urbanobservatory.in/`  | City Timeline link in the waterscapes story. |
-| `VITE_DATA_URL`     | `https://data.hyderabad.urbanobservatory.in/`      | Open-data site ("Data sources"). |
+| `VITE_TOOLS_URL`    | `https://hyderabad.urbanobservatory.in/tools/`     | Tools site (header nav). |
+| `VITE_STORIES_URL`  | `https://hyderabad.urbanobservatory.in/stories/`   | This site (header nav). |
+| `VITE_MAPS_URL`     | `https://hyderabad.urbanobservatory.in/maps`       | Spatial Data Repository (map viewer): links in the waterscapes story. |
+| `VITE_TIMELINE_URL` | `https://hyderabad.urbanobservatory.in/timeline/`  | City Timeline link in the waterscapes story. |
+| `VITE_DATA_URL`     | `https://hyderabad.urbanobservatory.in/data/`      | Open-data site ("Data sources"). |
 
 ## Deploys
 
