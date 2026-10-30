@@ -403,19 +403,10 @@ const TANK_MAX = 350000;
 const WEST = '#185FA5', REST = '#C4C8CF';
 // Events: date, label on the timeline, what the readout says, source.
 const EVENTS = [
-  ['2025-03-23', 'Panel inspects', 'A dam safety panel inspects Singur and finds the revetment of its earth dam damaged.', ['Telangana Today', 'https://telanganatoday.com/sangareddy-singur-reservoir-at-risk-of-breach-if-water-exceeds-517-metres']],
-  ['2025-06-23', 'Cracks reported', 'Reports describe vertical cracks across the earthen bund, and cracks in the parapet wall.', ['Telangana Today', 'https://telanganatoday.com/ndsa-orders-urgent-repairs-on-singur-dam-state-scales-down-storage-by-10-tmc']],
   ['2025-08-08', 'Storage capped', 'The panel\'s warning is reported, and storage is restricted.', ['Telangana Today', 'https://telanganatoday.com/singur-water-storage-capped-at-22-tmcft-due-to-safety-concerns']],
   ['2025-10-04', 'Record inflow', 'The highest inflow since the dam was commissioned. With the cap in place, most of it is released downstream.', ['Telangana Today', 'https://telanganatoday.com/singur-reservoir-breaks-27-year-inflow-record-amid-heavy-rains']],
-  ['2025-11-22', 'Decision to empty', 'Irrigation officials decide to empty Singur in phases for repairs.', ['Telangana Today', 'https://telanganatoday.com/singur-reservoir-to-be-emptied-from-december-1-for-major-repair-works']],
   ['2026-01-10', 'Drawdown begins', 'The drawdown begins.', ['Telangana Today', 'https://telanganatoday.com/irrigation-department-begins-drawdown-of-singur-reservoir-for-repairs']],
-  ['2026-03-11', 'Repairs faulted', 'Inspectors of the dam safety authority fault the quality and pace of the repairs.', ['Telangana Today', 'https://telanganatoday.com/ndsa-raises-concerns-over-slow-and-substandard-repair-works-at-singur-multipurpose-project']],
-  ['2026-04-13', 'El Niño forecast', 'IMD forecasts a below-normal monsoon, 92% of the long-period average, as El Niño develops.', ['Down To Earth', 'https://www.downtoearth.org.in/climate-change/south-west-monsoon-rainfall-to-be-below-normal-or-deficient-in-2026']],
   ['2026-06-01', 'Emergency pumping', 'Emergency pumps, 17 installed, are due to start at Singur.', ['NewsMeter', 'https://newsmeter.in/hyderabad/hyderabad-water-crisis-emergency-water-pumping-from-singur-reservoir-to-start-from-june-1-768993']],
-  ['2026-06-04', 'Monsoon late', 'The monsoon reaches Kerala three days late, and IMD cuts its forecast to 90% of normal.', ['Down To Earth', 'https://www.downtoearth.org.in/climate-change/monsoon-2026-has-arrived-but-indias-rain-season-begins-under-el-ni%C3%B1o-shadow']],
-  ['2026-10-17', 'Repairs lag', 'Only 620 m of the 2,416 m bund has been rebuilt.', ['Telangana Today', 'https://telanganatoday.com/singur-project-repairs-lag-only-620-metres-of-earthen-bund-completed']],
-  ['2026-10-25', 'Godavari link', 'Work is under way at Velimela to connect the Godavari Ring Main with the Manjira mains.', ['Siasat', 'https://www.siasat.com/godavari-water-to-meet-shortfall-in-singur-manjira-reservoirs-3564360/']],
-  ['2026-10-28', 'Drought declared', 'Telangana declares drought in 365 of its 621 mandals after June–September rain falls 17% below normal.', ['Rural Voice', 'https://eng.ruralvoice.in/state/telangana-declares-drought-in-365-mandals-across-31-districts.html']],
 ];
 let D, current;
 const fmt = n => Math.round(n).toLocaleString('en-IN');
@@ -540,7 +531,7 @@ function axisStrip(HEAD) {
 function drawTimeline(date) {
   if (!base) drawBase();
   let g = base;
-  const nowEv = EVENTS.filter(([d]) => d <= date).at(-1);
+  const nowEv = EVENTS.find(([d]) => d === date);
   // each label goes in the lowest of three rows where it clears the one before it (bold width allowed for)
   if (!drawTimeline.rows) {
     const end = [-1e9, -1e9, -1e9];
@@ -573,7 +564,7 @@ function drawTimeline(date) {
   if (innerWidth <= 900) { const k = svgEl.getBoundingClientRect().width / TW; svgEl.style.transform = `translateX(${(svgEl.parentNode.clientWidth / 2 - x * k).toFixed(1)}px)`; }
   else svgEl.style.transform = '';
   const s = storageOn('singur', date), m = storageOn('manjira', date);
-  document.getElementById('r-when').innerHTML = `<small>${nowEv ? nowEv[1] : 'Before the warning'}</small>${fmtDay(date)}`;
+  document.getElementById('r-when').innerHTML = `<small>${nowEv ? nowEv[1] : '&nbsp;'}</small>${fmtDay(date)}`;
   document.getElementById('r-nums').innerHTML = `<div class="k"><b>${s[1].toFixed(1)}</b>Singur, TMC ft</div><div class="k"><b>${m[1].toFixed(2)}</b>Manjira, TMC ft</div><div class="k"><b>${fmt(ML(tk[1]))} ML</b>by tanker, west, ${fmtMon(tk[0])}</div><div class="k"><b>${fmt(ML(tk[2]))} ML</b>rest of the city</div>`;
 }
 // ---------- map: the west on Manjira water, the rest of the city ----------
