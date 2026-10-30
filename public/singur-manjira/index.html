@@ -116,7 +116,7 @@ footer{scroll-snap-align:end}
 .chapters button.on{color:var(--ink);border-bottom-color:var(--ink)}
 .chapters button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 @media (min-width:1360px){
-  .scrolly{grid-template-columns:minmax(420px,502px) minmax(0,800px);gap:56px}
+  .scrolly{grid-template-columns:minmax(420px,502px) minmax(0,800px);gap:40px;padding:0 48px;max-width:1500px}
   .cardcol{display:grid;grid-template-columns:130px minmax(240px,340px);column-gap:32px;align-content:start}
   .cardcol>*{grid-column:2}
   .chapters{grid-column:1;grid-row:1 / span 60;align-self:start;top:calc(var(--hdr,64px) + 28px);flex-direction:column;gap:2px;margin:0;padding:0;border:0;background:none;overflow:visible}
@@ -536,7 +536,7 @@ function drawSat() {
   const [vx, vy] = sp(P_VEL);
   document.getElementById('sat').innerHTML = `
     <defs><marker id="sarr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#fff"/></marker></defs>
-    <image href="img/region-s2cloudless.jpg" width="${SAT.w}" height="${SAT.h}" style="filter:grayscale(.9) brightness(1.12) contrast(.9)"/>
+    <image href="img/region-grey.jpg" width="${SAT.w}" height="${SAT.h}"/>
     <path d="${of('hmda').map(f => sgeom(f.geometry)).join('')}" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="2" stroke-dasharray="10 7"/>
     <path d="${D.corps.features.filter(f => !/Cantonment/.test(f.properties.Corporation)).map(f => sgeom(f.geometry)).join('')}" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.6"/>
     ${CORP_LABELS.map(([t, ll]) => T(t, ll, { a: 'middle', s: 20, w: 900, ls: 4, f: '#F3F4F6', h: .55, sw: 5 })).join('')}
