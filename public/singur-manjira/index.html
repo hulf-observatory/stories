@@ -600,22 +600,19 @@ function drawSat() {
     ${CORP_LABELS.map(([t, ll]) => T(t, ll, { a: 'middle', s: 20, w: 900, ls: 4, f: '#F3F4F6', h: .55, sw: 5 })).join('')}
     ${PLACES.map(([t, ll]) => { const [x, y] = sp(ll); return `<circle cx="${x}" cy="${y}" r="3.5" fill="#C9CED6"/>` + T(t, ll, { dx: 8, dy: 5, s: 15, w: 400, f: '#C9CED6', h: .45, sw: 3.5 }); }).join('')}
     <g class="sat-g" data-on="west today"><path d="${wardsWest}" fill="rgba(206,38,30,.55)" stroke="rgba(206,38,30,.65)" stroke-width="1.2"/>${T('THE WEST', [78.36, 17.52], { a: 'middle', s: 22, w: 900, ls: 5, f: '#fff' })}${T(`${D.data.manjira_wards} wards named in Manjira shutdown notices`, [78.36, 17.52], { a: 'middle', dy: 26, s: 18, w: 400, f: '#F3F4F6', sw: 4 })}</g>
-    <g class="sat-g" data-on="places sources west singur manjira dams today">
+    <g class="sat-g" data-on="places west singur manjira dams today">
       <path d="${singur.map(f => sgeom(f.geometry)).join('')}" fill="#3F76B0"/>
       <path d="${manjira.map(f => sgeom(f.geometry)).join('')}" fill="#3F76B0"/>
       <path d="${of('lake').map(f => sgeom(f.geometry)).join('')}" fill="#7FA6CE"/>
       ${T('Osman Sagar', [78.27, 17.38], { a: 'end', dx: -14, s: 21, w: 700, i: 1, f: '#CFE0F2' })}
       ${T('Himayat Sagar', [78.35, 17.29], { a: 'end', dx: -16, dy: 10, s: 21, w: 700, i: 1, f: '#CFE0F2' })}
 </g>
-    <g class="sat-g" data-on="places sources west manjira today">${T('Singur', [77.95, 17.80], { dx: 26, s: 36, w: 900 })}</g>
-    <g class="sat-g" data-on="places sources west singur today">${T('Manjira', [78.075, 17.66], { dx: 22, dy: 12, s: 32, w: 900 })}</g>
+    <g class="sat-g" data-on="places west manjira today">${T('Singur', [77.95, 17.80], { dx: 26, s: 36, w: 900 })}</g>
+    <g class="sat-g" data-on="places west singur today">${T('Manjira', [78.075, 17.66], { dx: 22, dy: 12, s: 32, w: 900 })}</g>
     <g class="sat-g" data-on="singur dams">${T('Singur', [77.95, 17.80], { dx: 26, s: 40, w: 900 })}${T('29.9 TMC ft when full · earth dam 6.7 km', [77.95, 17.80], { dx: 26, dy: 36, s: 22, w: 400, f: '#DCE7F3' })}</g>
     <g class="sat-g" data-on="singur">${T('Capped in August 2025, drawn down from January 2026', [77.95, 17.80], { dx: 26, dy: 66, s: 19, w: 400, f: '#F3F4F6', sw: 4 })}</g>
     <g class="sat-g" data-on="manjira dams">${T('Manjira', [78.075, 17.66], { dx: 22, dy: 12, s: 40, w: 900 })}${T('1.5 TMC ft when full', [78.075, 17.66], { dx: 22, dy: 46, s: 22, w: 400, f: '#DCE7F3' })}</g>
     <g class="sat-g" data-on="manjira">${T('Apron blocks displaced or washed away, a 2026 order says', [78.075, 17.66], { dx: 22, dy: 76, s: 19, w: 400, f: '#F3F4F6', sw: 4 })}</g>
-    <g class="sat-g" data-on="sources">
-
-</g>
     <g class="sat-g" data-on="today"><circle cx="${vx}" cy="${vy}" r="13" fill="#CE261E" stroke="#fff" stroke-width="4"/>${T('Velimela: Godavari water joins the Manjira mains', P_VEL, { a: 'end', dx: -22, dy: -18, s: 22, w: 700 })}</g>`;
 }
 function fitSat() {
@@ -978,10 +975,9 @@ function cardList() {
     { ch: 'source', date: T0, view: 'chart:share', when: '', title: 'Hyderabad draws its water from six sources',
       body: `<p>In 2025, the water board drew on average about ${fmt(D25.total)} million litres a day. The Krishna gave ${fmt(D25.krishna)} million litres and the Godavari ${fmt(D25.godavari)}. Singur gave ${fmt(D25.singur)} and Manjira ${fmt(D25.manjira)}, and the two lakes, Osman Sagar and Himayat Sagar, ${fmt(D25.osmansagar + D25.himayatsagar)} between them ${L(['HMWSSB', 'hmwssb'])}.</p>
              <p><span class="km">Singur and Manjira together gave <b>${Math.round(100 * (D25.singur + D25.manjira) / D25.total)}%</b>, about a fifth of the city's water.</span></p>` },
-    { ch: 'source', date: T0, view: 'sat:sources', when: '', title: 'Singur and Manjira lie on the Manjira river, north-west of the city',
-      body: `<p>Singur and, downstream of it, Manjira are on the Manjira river ${L(['CWC', 'cwc'], ['Deccan Chronicle', 'dc22'])}. The map also shows Osman Sagar and Himayat Sagar. The Krishna and the Godavari lie outside it.</p>` },
     { ch: 'source', date: T0, view: 'sat:dams', when: '', title: 'Singur holds 29.9 TMC ft when full, and Manjira, downstream of it, 1.5',
-      body: `<p>Singur has an earth dam 6.7 km long and a masonry section of 330 m across the Manjira in Sangareddy district, with 17 spillway gates ${L(['CWC', 'cwc'])}. When full, it holds <b>29.9 TMC ft</b> ${L(['Telangana Today', 'tt24'])}, or thousand million cubic feet ${L(['Siasat', 'si137'])}. Its water goes to the city, to about 40,000 acres along its canals, to the Mission Bhagiratha drinking water schemes and to irrigation further downstream ${L(['GO Rt 885', 'go885'], ['Telangana Today', 'tt60'])}.</p>
+      body: `<p>Singur and, downstream of it, Manjira are on the Manjira river, north-west of the city ${L(['CWC', 'cwc'], ['Deccan Chronicle', 'dc22'])}. The map also shows Osman Sagar and Himayat Sagar. The Krishna and the Godavari lie outside it.</p>
+             <p>Singur has an earth dam 6.7 km long and a masonry section of 330 m across the Manjira in Sangareddy district, with 17 spillway gates ${L(['CWC', 'cwc'])}. When full, it holds <b>29.9 TMC ft</b> ${L(['Telangana Today', 'tt24'])}, or thousand million cubic feet ${L(['Siasat', 'si137'])}. Its water goes to the city, to about 40,000 acres along its canals, to the Mission Bhagiratha drinking water schemes and to irrigation further downstream ${L(['GO Rt 885', 'go885'], ['Telangana Today', 'tt60'])}.</p>
              <p>The Manjira dam is much smaller, with a storage capacity of <b>1.5 TMC ft</b> ${L(['Telangana Today', 'tt14'], ['GO Rt 780', 'go780'])}. It is replenished by flows from Singur, so <span class="km">when Singur runs low, Manjira follows</span> ${L(['Deccan Chronicle', 'dc47'])}. A government order of March 2026 says that only 70% of the designed quantity is now drawn through its pipelines ${L(['GO Rt 315', 'go315'])}.</p>` },
     { ch: 'source', date: T0, view: 'sat:west', when: '', title: 'The Singur and Manjira lines serve the fast-growing west',
       body: `<p><span class="km">The Singur and Manjira lines serve the city's western, northwestern and northern suburbs</span>, including Patancheru, Miyapur, Kukatpally, Serilingampally and Ameerpet ${L(['Telangana Today', 'tt128'], ['Deccan Chronicle', 'dc47'])}. The map shows the ${D.data.manjira_wards} wards in the west that are named in HMWSSB's shutdown notices for the Manjira lines. A few scattered wards elsewhere are named too.</p>
@@ -998,7 +994,7 @@ function cardList() {
              <p>From here on, the picture becomes a timeline, day by day. It shows what each reservoir held, the water flowing in and out each week, and the water people bought by tanker, all in volumes of water.</p>` },
     { ch: 'flag', date: '2025-08-08', view: 'tl', when: 'August 2025', title: 'The warning reaches the papers, and Singur is capped',
       body: `<p>The panel's warning reached the newspapers in August, under the headline "May Collapse Anytime" ${L(['Deccan Chronicle', 'dc22'])}. A senior irrigation engineer said there was no immediate threat to the reservoir ${L(['New Indian Express', 'nie26'])}. Even so, <span class="km">storage was restricted to 22 TMC ft, and by 22 August to 16.5 TMC ft</span> ${L(['Telangana Today', 'tt40'])}. Some reports gave the first limit as 20 TMC ft ${L(['New Indian Express', 'nie26'])}.</p>
-             <p>In a letter of 13 August, the National Dam Safety Authority said the stability of the dam was in a "high-risk condition", and warned that the "dam owners" would be held responsible under the Dam Safety Act 2021 if repairs were not taken up ${L(['Deccan Chronicle', 'dc30'])}. Telangana Today reported that the government would need other sources for Hyderabad's drinking water ${L(['Telangana Today', 'tt40'])}.</p>` },
+             <p>In a letter of 13 August, <span class="km">the National Dam Safety Authority said the stability of the dam was in a "high-risk condition", and warned that the "dam owners" would be held responsible under the Dam Safety Act 2021 if repairs were not taken up</span> ${L(['Deccan Chronicle', 'dc30'])}. Telangana Today reported that the government would need other sources for Hyderabad's drinking water ${L(['Telangana Today', 'tt40'])}.</p>` },
     { ch: 'events', date: '2025-10-04', view: 'tl', when: 'August – October 2025', title: 'A record inflow is let through',
       body: `<p>Then came the highest inflow since the dam was commissioned, breaking a record that had stood for 27 years ${L(['Telangana Today', 'tt43'])}. About <b>${Math.round(D.data.inflow_wy['2025'])} TMC ft</b> flowed in over the water year, about eight times what the reservoir can hold ${L(['HMWSSB', 'hmwssb'])}. However, with the cap in place, <span class="km">almost all of it was released downstream</span> through the crest gates, power plants and irrigation channels ${L(['Telangana Today', 'tt43'])}.</p>` },
     { ch: 'events', date: '2026-01-10', view: 'tl', when: 'November 2025 – February 2026', title: 'Singur is drawn down by half for repairs',
