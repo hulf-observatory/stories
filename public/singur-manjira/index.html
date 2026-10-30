@@ -86,11 +86,15 @@ h1{font:700 32px/1.2 Lato;letter-spacing:-.005em;margin:8px 0 10px;max-width:820
 #v-photo .credit{font-size:11.5px;color:var(--muted)}
 #v-photo .credit a{color:var(--muted)}
 .scard p b{color:var(--ink)}
-.scard ul.livelinks{list-style:none;margin:12px 0 0;padding:0}
-.livelinks li{padding:10px 0;border-top:1px solid var(--border);font-size:14px;line-height:1.5;color:var(--text-2)}
-.livelinks a{display:block;font-weight:700;font-size:15px;color:#3F76B0;text-decoration:none}
-.livelinks a::after{content:' ↗';font-weight:400}
-.livelinks a:hover{color:#185FA5;text-decoration:underline}
+.refs ul.livelinks{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.refs .livelinks li{padding:10px 0 0;margin:0;border-top:1px solid var(--border);border-radius:0;font-size:13.5px;line-height:1.5;color:var(--text-2)}
+.follow>p a{color:#3F76B0;font-weight:700;text-decoration:none}
+.follow>p a::after{content:' ↗';font-weight:400}
+.follow>p a:hover{color:#185FA5;text-decoration:underline}
+@media (max-width:900px){.refs ul.livelinks{grid-template-columns:1fr;gap:10px}}
+.refs .livelinks a{display:block;font-weight:700;font-size:15px;color:#3F76B0;text-decoration:none}
+.refs .livelinks a::after{content:' ↗';font-weight:400}
+.refs .livelinks a:hover{color:#185FA5;text-decoration:underline}
 .km{text-decoration:underline;text-decoration-color:#CE261E;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-skip-ink:none}
 .cardcol{padding:28px 0 calc(100vh - 220px)}
 .scard.title{scroll-snap-align:start;scroll-margin-top:92px}
@@ -366,6 +370,16 @@ body.article .m-fig .info.on-chart{position:absolute;right:0;left:auto;z-index:3
 </section>
 
 
+
+<section class="refs follow" id="follow">
+  <h2>Follow the latest</h2>
+  <p>While the figures in this story end in October 2026, the situation continues to change. The Observatory's <a href="https://hyderabad.urbanobservatory.in/live/" target="_blank" rel="noopener">live pages</a> follow it, including:</p>
+  <ul class="livelinks">
+    <li><a href="https://hyderabad.urbanobservatory.in/live/reservoirs/" target="_blank" rel="noopener">Reservoirs</a>how full each reservoir is, against last year and the average, the inflows, and the water drawn from each source</li>
+    <li><a href="https://hyderabad.urbanobservatory.in/live/tankers/" target="_blank" rel="noopener">Tankers</a>water tanker bookings across the city</li>
+    <li><a href="https://hyderabad.urbanobservatory.in/live/weather/" target="_blank" rel="noopener">Weather and air</a>rain against the IMD normal, station by station</li>
+  </ul>
+</section>
 
 <section class="refs" id="sources">
   <h2>Sources</h2>
@@ -1059,9 +1073,6 @@ function cardList() {
       body: `<p>At October's rate of supply, Singur would last until 9 November, and with emergency pumping from its dead storage, until about 10 December ${L(['Deccan Chronicle', 'dc125'])}. Fresh inflows are not expected until next June ${L(['Telangana Today', 'tt119'])}. In June, officials had said that at least 16 TMC ft should be kept aside for the next summer ${L(['Deccan Chronicle', 'dc90'])}. It now holds about 3 TMC ft ${L(['Times of India', 'toi150'])}. <span class="km">Water board officials have told the government that the stocks in Singur and Manjira can be stretched to 60 days at most</span> ${L(['Eenadu', 'en1030'])}.</p>
              <p>On 29 October, the water board's managing director said that the city could face a deficit of up to 50 million gallons a day, about 227 million litres, between January and August next year. The board expects a shortfall of around 100 million gallons a day from Singur and Manjira, and is working to find 60 million gallons more from the Godavari, the Krishna and Osman Sagar. <span class="km">The remaining deficit could affect around three lakh connections between Patancheru and Narsingi</span> ${L(['Deccan Chronicle', 'dc1029'])}.</p>
              <p>In July, the water board decided to draw an additional 114–136 million litres a day of Mission Bhagiratha water from Mallannasagar ${L(['Times of India', 'toi100'])}. Beyond the city, the state is expected to struggle to supply many towns and large rural areas until the 2027 monsoon ${L(['Deccan Chronicle', 'dc127'])}. With only 620 of the 2,416 metres under repair completed, <span class="km">the prospect of storing water to the optimum level even next monsoon appears bleak</span> ${L(['Telangana Today', 'tt123'])}.</p>` },
-    { ch: 'live', date: '2026-10-22', view: 'chart:tanks', when: '', title: 'Follow the current status on the Observatory\'s live pages',
-      body: `<p>While the figures in this story end in October 2026, the situation continues to change. These pages follow it:</p>
-             <ul class="livelinks"><li><a href="https://hyderabad.urbanobservatory.in/live/reservoirs/" target="_blank" rel="noopener">Reservoirs</a> how full each reservoir is, against last year and the average, the inflows, and the water drawn from each source</li><li><a href="https://hyderabad.urbanobservatory.in/live/tankers/" target="_blank" rel="noopener">Tankers</a> water tanker bookings across the city</li><li><a href="https://hyderabad.urbanobservatory.in/live/weather/" target="_blank" rel="noopener">Weather and air</a> rain against the IMD normal, station by station</li></ul>` },
   ];
 }
 let CARDS = [];
@@ -1123,7 +1134,7 @@ function buildArticle() {
   const go = el => scrollTo({ top: el.getBoundingClientRect().top + scrollY - hdr() - nav.offsetHeight - 8, behavior: 'smooth' });
   nav.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return; b.blur();
-    if (b.dataset.ch === 'sources') { showBack(scrollY); go(document.getElementById('sources')); return; }
+    if (b.dataset.ch === 'sources' || b.dataset.ch === 'live') { showBack(scrollY); go(document.getElementById(b.dataset.ch === 'live' ? 'follow' : 'sources')); return; }
     const i = CARDS.findIndex(c => c.ch === b.dataset.ch);
     i ? go(secs[i]) : scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -1178,9 +1189,9 @@ function bindScroll() {
   let lock = 0;
   const glideTo = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
   // straight to the sources, without scrolling through the space below the story
-  const goSources = () => {
+  const goSources = (id = 'sources') => {
     showBack(scrollY); lock = performance.now() + 300;
-    scrollTo({ top: document.getElementById('sources').getBoundingClientRect().top + scrollY - hdr() - 16, behavior: 'instant' });
+    scrollTo({ top: document.getElementById(id).getBoundingClientRect().top + scrollY - hdr() - 16, behavior: 'instant' });
   };
   const jump = dir => {
     const el = els[active], box = el.getBoundingClientRect();
@@ -1190,14 +1201,14 @@ function bindScroll() {
     if (dir < 0 && box.top < ceil - 8) { lock = performance.now() + 500; scrollBy({ top: -Math.min(page, ceil - box.top + 4), behavior: glideTo() }); return true; }
     const next = step + dir;
     if (next >= 0 && next < stepsOf(CARDS[active]).length) { step = next; lock = performance.now() + 600; applyStep(); return true; }
-    if (dir > 0 && active === els.length - 1) { goSources(); return true; }
+    if (dir > 0 && active === els.length - 1) { goSources('follow'); return true; }
     const i = Math.max(0, Math.min(els.length - 1, active + dir));
     if (i === active) return false;
     lock = performance.now() + 750;
     scrollTo({ top: topOf(i), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
     return true;
   };
-  const inStory = dir => (dir > 0 && active === els.length - 1 ? document.getElementById('sources').getBoundingClientRect().top > hdr() + 40 : scrollY < storyEnd() + (dir < 0 ? 2 : 0));
+  const inStory = dir => (dir > 0 && active === els.length - 1 ? document.getElementById('follow').getBoundingClientRect().top > hdr() + 40 : scrollY < storyEnd() + (dir < 0 ? 2 : 0));
   addEventListener('wheel', e => {
     if (Math.abs(e.deltaY) < 2) return;
     const dir = Math.sign(e.deltaY);
@@ -1222,7 +1233,7 @@ function bindScroll() {
   });
   document.querySelector('.chapters').addEventListener('click', ev => {
     const b = ev.target.closest('button'); if (!b) return;
-    if (b.dataset.ch === 'sources') { b.blur(); goSources(); return; }
+    if (b.dataset.ch === 'sources' || b.dataset.ch === 'live') { b.blur(); goSources(b.dataset.ch === 'live' ? 'follow' : 'sources'); return; }
     const i = CARDS.findIndex(c => c.ch === b.dataset.ch);
     lock = performance.now() + 750; b.blur();
     scrollTo({ top: i ? topOf(i) : 0, behavior: 'smooth' });
