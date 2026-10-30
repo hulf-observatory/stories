@@ -21,6 +21,13 @@ const ALL_FILTERS = [
 
 const CARDS = [
   {
+    themes: ['WATER'],
+    themeLabel: 'WATER',
+    title: 'Too risky to fill, now too dry to supply',
+    href: `${import.meta.env.BASE_URL}singur-manjira/`,
+    description: 'Two dams give Hyderabad a fifth of its water. In 2025, engineers warned that one of them could break, so it was capped and then drawn down for repairs. Then came a dry El Niño year.',
+  },
+  {
     themes: ['ENVIRONMENTAL IMPACT'],
     themeLabel: 'ENVIRONMENTAL IMPACT',
     title: 'Kancha Gachibowli Forest Change Analysis',
@@ -125,9 +132,13 @@ export default function Stories() {
             <p>{card.description}</p>
             {!card.comingSoon && (
               <p style={{ marginTop: 16 }}>
-                <Link to={card.link} style={{ fontWeight: 500 }}>
-                  Click here to explore &rarr;
-                </Link>
+                {card.href ? (
+                  <a href={card.href} style={{ fontWeight: 500 }}>Click here to explore &rarr;</a>
+                ) : (
+                  <Link to={card.link} style={{ fontWeight: 500 }}>
+                    Click here to explore &rarr;
+                  </Link>
+                )}
               </p>
             )}
           </ExpandableCard>
