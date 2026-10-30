@@ -95,6 +95,46 @@ h1{font:700 32px/1.2 Lato;letter-spacing:-.005em;margin:8px 0 10px;max-width:820
 .refs .livelinks a{display:block;font-weight:700;font-size:15px;color:#3F76B0;text-decoration:none}
 .refs .livelinks a::after{content:' ↗';font-weight:400}
 .refs .livelinks a:hover{color:#185FA5;text-decoration:underline}
+.lc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:8px}
+.lc{display:grid;grid-template-columns:minmax(0,55fr) minmax(0,45fr);gap:12px;background:#fff;border:1px solid var(--border);border-radius:4px;padding:18px 20px;color:var(--ink);text-decoration:none}
+.lc:hover{border-color:var(--border-2)}
+.lc-text{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lc h3{margin:0;font:700 17px/1.3 Lato}
+.lc-value{display:flex;align-items:baseline;gap:6px;font:700 38px/1.05 Lato;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.lc-value span{font:400 15px/1 Lato;color:var(--text-2)}
+.lc p{margin:0;font-size:14px;line-height:1.4;color:var(--text-2)}
+.lc p.lc-compare{font-weight:700;color:var(--ink)}
+.lc p.lc-when{font-size:12px;color:var(--muted)}
+.lc-open{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;height:32px;margin-top:auto;padding:0 12px;font:700 13px/1 Lato;border:1px solid var(--border-2);border-radius:4px}
+.lc:hover .lc-open{background:#F3F4F6;border-color:var(--ink)}
+.lc-none{font-size:15px;color:var(--text-2)}
+.lc .lg{position:relative;display:flex;gap:10px;height:100%;min-height:128px;width:100%}
+.lc .lg-col{position:relative;flex:none;width:22px;height:100%}
+.lc .lg-col.tank{border:1px solid var(--border-2);border-top:0;border-radius:0 0 3px 3px}
+.lc .lg-col.box{background:#F3F4F6;border-radius:3px;overflow:hidden}
+.lc .lg-fill,.lc .lg-gap{position:absolute;left:0;right:0;bottom:0}
+.lc .lg-gap{background:repeating-linear-gradient(135deg,rgba(206,38,30,.5) 0 1.5px,transparent 1.5px 5px)}
+.lc .lg-fill.over{background:repeating-linear-gradient(135deg,rgba(255,255,255,.75) 0 1.5px,transparent 1.5px 5px)}
+.lc .lg-normal,.lc .lg-last{position:absolute;left:-5px;right:-5px;transform:translateY(50%)}
+.lc .lg-normal{border-top:1.5px dashed var(--ink)}
+.lc .lg-last{border-top:1.5px solid #9CA3AF}
+.lc .lg-last.top{transform:translateY(-50%)}
+.lc .lg-labels{position:relative;flex:1;min-width:0;height:100%}
+.lc .lg-labels span{position:absolute;left:0;transform:translateY(50%);font-size:12px;line-height:1.2;color:var(--muted);white-space:nowrap}
+.lc .lg-labels span.is-now{font-weight:700;color:var(--ink)}
+.lc .lg.well{border-top:1.5px solid var(--border-2)}
+.lc .lg.well .lg-col.tank{border-bottom:0;border-radius:0}
+.lc .lg.well .lg-fill{bottom:0}
+.lc .lg.well .lg-labels span{transform:translateY(-50%)}
+.lc .lg-ground{position:absolute;right:0;top:4px;font-size:12px;line-height:1;color:var(--muted)}
+@media (max-width:900px){.lc-grid{grid-template-columns:1fr}.lc{padding:16px 18px}.lc .lg{min-height:112px}}
+#sources,section.articles{max-width:1040px}
+:is(#sources,.articles) ol{columns:2;column-gap:40px}
+:is(#sources,.articles) li{break-inside:avoid;font-size:12px;line-height:1.45;color:#9CA3AF}
+:is(#sources,.articles) li .h b{color:#6B7280}
+:is(#sources,.articles) li a{color:#9CA3AF;text-decoration-color:#E5E7EB}
+:is(#sources,.articles) li a:hover{color:var(--ink)}
+@media (max-width:900px){:is(#sources,.articles) ol{columns:1}}
 .km{text-decoration:underline;text-decoration-color:#CE261E;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-skip-ink:none}
 .cardcol{padding:28px 0 calc(100vh - 220px)}
 .scard.title{scroll-snap-align:start;scroll-margin-top:92px}
@@ -419,8 +459,8 @@ async function main() {
   const [data, geo, arts, corps] = await Promise.all(['data.json', 'geo.json', 'articles.json', 'corps.geojson'].map(n => fetch(`${n}`).then(r => r.json())));
   // today's storage in every reservoir, the same feed as the Reservoirs page
   const [excerpts, drought] = await Promise.all(['excerpts.json', 'drought.json'].map(n => fetch(n).then(r => r.json()).catch(() => ({}))));
-  const [live, wx] = await Promise.all(['reservoirs-history', 'weather-history'].map(n => fetch(`https://api.urbanobservatory.in/live/${n}.json`).then(r => r.json()).catch(() => null)));
-  D = { data, geo, arts, corps, live, wx, excerpts, drought };
+  const [live, wx, summary] = await Promise.all(['reservoirs-history', 'weather-history', 'summary'].map(n => fetch(`https://api.urbanobservatory.in/live/${n}.json`).then(r => r.json()).catch(() => null)));
+  D = { data, geo, arts, corps, live, wx, excerpts, drought, summary };
   D.pct = { singur: smoothPct('singur'), manjira: smoothPct('manjira') };
   current = data.latest;
   drawSat(); fitSat(); drawArticles('all'); buildCards(); if (innerWidth <= 900) buildArticle(); else bindScroll();
@@ -550,14 +590,14 @@ function drawTimeline(date) {
   });
   const x = tx(date), ps = pctOn('singur', date), pm = pctOn('manjira', date), tk = tankOn(date);
   g += `<rect x="${x}" y="${AX + 20}" width="${TR - x}" height="${TH - AX - 20}" fill="#fff" opacity=".55" pointer-events="none"/>`;
-  g += `<line x1="${x}" x2="${x}" y1="${AX - 8}" y2="${LANES.tankers[1] + 4}" stroke="#CE261E" stroke-width="2" pointer-events="none"/><circle cx="${x}" cy="${AX}" r="6" fill="#CE261E" stroke="#fff" stroke-width="2"/>`;
-  const right = x > TR - 120, lab = (y, t) => `<text x="${right ? x - 9 : x + 9}" y="${y}" text-anchor="${right ? 'end' : 'start'}" font-size="13" font-weight="700" fill="#CE261E" paint-order="stroke" stroke="#fff" stroke-width="3.5" pointer-events="none">${t}</text>`;
+  g += `<line x1="${x}" x2="${x}" y1="${AX - 8}" y2="${LANES.tankers[1] + 4}" stroke="#CE261E" stroke-width="1" pointer-events="none"/><circle cx="${x}" cy="${AX}" r="4" fill="#CE261E" stroke="#fff" stroke-width="1"/>`;
+  const right = x > TR - 120, lab = (y, t) => `<text x="${right ? x - 9 : x + 9}" y="${y}" text-anchor="${right ? 'end' : 'start'}" font-size="11.5" font-weight="700" fill="#CE261E" paint-order="stroke" stroke="#fff" stroke-width="3" pointer-events="none">${t}</text>`;
   for (const [k, v] of [['singur', ps], ['manjira', pm]]) {
     const y = yv(k, v);
-    g += `<circle cx="${x}" cy="${y}" r="5" fill="#CE261E" stroke="#fff" stroke-width="1.5" pointer-events="none"/>` + lab(Math.max(LANES[k][0] + 14, Math.min(y - 7, LANES[k][1] - 4)), `${v.toFixed(k === 'singur' ? 1 : 2)} TMC ft · ${Math.round(100 * v / CAP[k])}%`);
+    g += `<circle cx="${x}" cy="${y}" r="3.5" fill="#CE261E" stroke="#fff" stroke-width="1" pointer-events="none"/>` + lab(Math.max(LANES[k][0] + 14, Math.min(y - 7, LANES[k][1] - 4)), `${v.toFixed(k === 'singur' ? 1 : 2)} TMC ft · ${Math.round(100 * v / CAP[k])}%`);
   }
   const yw = yv('tankers', ML(tk[1])), yt = yv('tankers', ML(tk[1] + tk[2]));
-  g += `<circle cx="${x}" cy="${yw}" r="5" fill="#CE261E" stroke="#fff" stroke-width="1.5" pointer-events="none"/><circle cx="${x}" cy="${yt}" r="4" fill="#fff" stroke="#CE261E" stroke-width="1.5" pointer-events="none"/>`;
+  g += `<circle cx="${x}" cy="${yw}" r="3.5" fill="#CE261E" stroke="#fff" stroke-width="1" pointer-events="none"/><circle cx="${x}" cy="${yt}" r="3" fill="#fff" stroke="#CE261E" stroke-width="1" pointer-events="none"/>`;
   g += lab(Math.max(LANES.tankers[0] + 50, yt - 6), `west ${fmt(ML(tk[1]))} ML · rest ${fmt(ML(tk[2]))} ML`);
   document.getElementById('tl').innerHTML = g;
   // On phones the chart keeps its size and slides so the date sits in the middle of the screen.
@@ -578,7 +618,6 @@ const geomPath = g => g.type === 'Polygon' ? g.coordinates.map(ring).join('') : 
 const P = { singur: [77.951, 17.764], manjira: [78.0756, 17.6568], west: [78.37, 17.49] };
 const PIPE_SINGUR = [[77.951,17.764],[78.02,17.71],[78.07,17.635],[78.14,17.575],[78.21,17.545],[78.267,17.529],[78.255,17.482],[78.316,17.488],[78.357,17.486],[78.40,17.47]];
 const PIPE_MANJIRA = [[78.0756,17.6568],[78.10,17.60],[78.17,17.56],[78.267,17.529]];
-const P_VEL = [78.255, 17.476];
 // Town and area names (positions from OpenStreetMap) and the boundary labels.
 const PLACES = [['Sangareddy', [78.0817, 17.6155]], ['Sadasivpet', [77.9503, 17.6212]], ['Patancheru', [78.2674, 17.5286]], ['Medak', [78.2652, 18.0459]],
   ['Gajwel', [78.6829, 17.8457]], ['Vikarabad', [77.904, 17.3379]], ['Kukatpally', [78.4054, 17.4931]], ['Gachibowli', [78.352, 17.4436]],
@@ -597,7 +636,6 @@ function drawSat() {
   const arrow = (from, to, t1, t2) => { const [x0, y0] = sp(from), [x1, y1] = sp(to); return `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="#fff" stroke-width="5" marker-end="url(#sarr)"/>` + T(t1, from, { a: 'end', dy: 34, s: 24 }) + T(t2, from, { a: 'end', dy: 62, s: 19, w: 400 }); };
   const res = of('reservoir'), singur = res.filter(f => f.properties.name === 'Singur'), manjira = res.filter(f => f.properties.name === 'Manjira');
   const wardsAll = of('ward').map(f => sgeom(f.geometry)).join(''), wardsWest = of('ward').filter(f => f.properties.manjira).map(f => sgeom(f.geometry)).join('');
-  const [vx, vy] = sp(P_VEL);
   document.getElementById('sat').innerHTML = `
     <defs><marker id="sarr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#fff"/></marker></defs>
     <image href="img/region-grey.jpg" width="${SAT.w}" height="${SAT.h}"/>
@@ -605,21 +643,20 @@ function drawSat() {
     <path d="${D.corps.features.filter(f => !/Cantonment/.test(f.properties.Corporation)).map(f => sgeom(f.geometry)).join('')}" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.6"/>
     ${CORP_LABELS.map(([t, ll]) => T(t, ll, { a: 'middle', s: 20, w: 900, ls: 4, f: '#F3F4F6', h: .55, sw: 5 })).join('')}
     ${PLACES.map(([t, ll]) => { const [x, y] = sp(ll); return `<circle cx="${x}" cy="${y}" r="3.5" fill="#C9CED6"/>` + T(t, ll, { dx: 8, dy: 5, s: 15, w: 400, f: '#C9CED6', h: .45, sw: 3.5 }); }).join('')}
-    <g class="sat-g" data-on="west today"><path d="${wardsWest}" fill="rgba(206,38,30,.55)" stroke="rgba(206,38,30,.65)" stroke-width="1.2"/>${T('THE WEST', [78.36, 17.52], { a: 'middle', s: 22, w: 900, ls: 5, f: '#fff' })}${T(`${D.data.manjira_wards} wards named in Manjira shutdown notices`, [78.36, 17.52], { a: 'middle', dy: 26, s: 18, w: 400, f: '#F3F4F6', sw: 4 })}</g>
-    <g class="sat-g" data-on="places west singur manjira dams today">
+    <g class="sat-g" data-on="west"><path d="${wardsWest}" fill="rgba(206,38,30,.55)" stroke="rgba(206,38,30,.65)" stroke-width="1.2"/>${T('THE WEST', [78.36, 17.52], { a: 'middle', s: 22, w: 900, ls: 5, f: '#fff' })}${T(`${D.data.manjira_wards} wards named in Manjira shutdown notices`, [78.36, 17.52], { a: 'middle', dy: 26, s: 18, w: 400, f: '#F3F4F6', sw: 4 })}</g>
+    <g class="sat-g" data-on="places west singur manjira dams">
       <path d="${singur.map(f => sgeom(f.geometry)).join('')}" fill="#3F76B0"/>
       <path d="${manjira.map(f => sgeom(f.geometry)).join('')}" fill="#3F76B0"/>
       <path d="${of('lake').map(f => sgeom(f.geometry)).join('')}" fill="#7FA6CE"/>
       ${T('Osman Sagar', [78.27, 17.38], { a: 'end', dx: -14, s: 21, w: 700, i: 1, f: '#CFE0F2' })}
       ${T('Himayat Sagar', [78.35, 17.29], { a: 'end', dx: -16, dy: 10, s: 21, w: 700, i: 1, f: '#CFE0F2' })}
 </g>
-    <g class="sat-g" data-on="places west manjira today">${T('Singur', [77.95, 17.80], { dx: 26, s: 36, w: 900 })}</g>
-    <g class="sat-g" data-on="places west singur today">${T('Manjira', [78.075, 17.66], { dx: 22, dy: 12, s: 32, w: 900 })}</g>
+    <g class="sat-g" data-on="places west manjira">${T('Singur', [77.95, 17.80], { dx: 26, s: 36, w: 900 })}</g>
+    <g class="sat-g" data-on="places west singur">${T('Manjira', [78.075, 17.66], { dx: 22, dy: 12, s: 32, w: 900 })}</g>
     <g class="sat-g" data-on="singur dams">${T('Singur', [77.95, 17.80], { dx: 26, s: 40, w: 900 })}${T('29.9 TMC ft when full · earth dam 6.7 km', [77.95, 17.80], { dx: 26, dy: 36, s: 22, w: 400, f: '#DCE7F3' })}</g>
     <g class="sat-g" data-on="singur">${T('Capped in August 2025, drawn down from January 2026', [77.95, 17.80], { dx: 26, dy: 66, s: 19, w: 400, f: '#F3F4F6', sw: 4 })}</g>
     <g class="sat-g" data-on="manjira dams">${T('Manjira', [78.075, 17.66], { dx: 22, dy: 12, s: 40, w: 900 })}${T('1.5 TMC ft when full', [78.075, 17.66], { dx: 22, dy: 46, s: 22, w: 400, f: '#DCE7F3' })}</g>
-    <g class="sat-g" data-on="manjira">${T('Apron blocks displaced or washed away, a 2026 order says', [78.075, 17.66], { dx: 22, dy: 76, s: 19, w: 400, f: '#F3F4F6', sw: 4 })}</g>
-    <g class="sat-g" data-on="today"><circle cx="${vx}" cy="${vy}" r="13" fill="#CE261E" stroke="#fff" stroke-width="4"/>${T('Velimela: Godavari water joins the Manjira mains', P_VEL, { a: 'end', dx: -22, dy: -18, s: 22, w: 700 })}</g>`;
+    <g class="sat-g" data-on="manjira">${T('Apron blocks displaced or washed away, a 2026 order says', [78.075, 17.66], { dx: 22, dy: 76, s: 19, w: 400, f: '#F3F4F6', sw: 4 })}</g>`;
 }
 function fitSat() {
   const box = document.getElementById('v-sat'), svg = document.getElementById('sat');
@@ -817,6 +854,37 @@ function drawDrought() {
   alignByline(); setTimeout(alignByline, 60); document.fonts?.ready.then(alignByline);
   document.getElementById('cs').textContent = 'G.O.Ms.No.03, Revenue (DM-II), 24 Oct 2026, Annexure II · mandal boundaries, TGRAC · dashed line = Sangareddy district · Karimnagar (Rural-II) has no boundary of its own in the layer, so is not drawn';
 }
+// The cards of the Observatory's Live page (/live/) for water: the same numbers, wording and graphics (site/src/pages/live/
+// Live.jsx, Graphics.jsx), from the same feed, each opening its page. They show the latest readings, not the story's dates.
+function drawLiveCards() {
+  const box = document.getElementById('tanks'), MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], BLUE = '#3F76B0', LIVE = 'https://hyderabad.urbanobservatory.in/live/';
+  const num = (v, d = 1) => v == null ? '–' : Number(v).toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const day = a => { const [y, m, n] = a.slice(0, 10).split('-').map(Number); return `${n} ${MON[m - 1]}${y !== new Date().getFullYear() ? ` ${y}` : ''}`; };
+  const mon = a => `${MON[+a.slice(5, 7) - 1]} ${a.slice(0, 4)}`;
+  const upd = a => !a ? '' : a.length === 7 ? `Data for ${mon(a)}` : a.length === 10 ? `Data for ${day(a)}` : `Updated ${(+a.slice(11, 13)) % 12 || 12}:${a.slice(14, 16)} ${+a.slice(11, 13) < 12 ? 'am' : 'pm'}, ${day(a)}`;
+  const compact = v => v >= 1e5 ? `${num(v / 1e5, 2)} lakh` : v >= 1e3 ? `${num(v / 1e3, 0)}k` : num(v, 0);
+  const cl = v => Math.max(0, Math.min(100, v));
+  const labels = (items, fromTop) => { const o = items.sort((a, b) => a.at - b.at).map(l => ({ ...l, y: l.at })); o.forEach((l, i) => { if (i && l.y - o[i - 1].y < 11) l.y = o[i - 1].y + 11; }); const over = o.at(-1).y - 96; if (over > 0) o.forEach(l => l.y -= over); return `<div class="lg-labels">${o.map(l => `<span class="${l.now ? 'is-now' : ''}" style="${fromTop ? 'top' : 'bottom'}:${l.y}%">${l.text}</span>`).join('')}</div>`; };
+  const tank = ({ value, normal, lastYear, max, closed, nowText, normalText, lastYearText }) => { const top = max || Math.max(value, normal, lastYear || 0) * 1.08 || 1, q = v => cl(v / top * 100);
+    return `<div class="lg"><div class="lg-col ${closed ? 'box' : 'tank'}"><span class="lg-fill" style="height:${q(value)}%;background:${BLUE}"></span><span class="lg-gap" style="bottom:${q(Math.min(value, normal))}%;height:${Math.abs(q(normal) - q(value))}%"></span><span class="lg-normal" style="bottom:${q(normal)}%"></span>${lastYear != null ? `<span class="lg-last" style="bottom:${q(lastYear)}%"></span>` : ''}</div>${labels([{ at: q(value), text: nowText, now: 1 }, { at: q(normal), text: normalText }, ...(lastYear != null ? [{ at: q(lastYear), text: lastYearText }] : [])])}</div>`; };
+  const well = (depth, before) => { const b = Math.max(20, Math.ceil(Math.max(depth, before) / 5) * 5), q = v => cl(v / b * 100);
+    return `<div class="lg well"><div class="lg-col tank"><span class="lg-fill" style="top:${q(depth)}%;background:${BLUE}"></span><span class="lg-gap" style="top:0;height:${q(depth)}%"></span><span class="lg-last top" style="top:${q(before)}%"></span></div><span class="lg-ground">ground</span>${labels([{ at: q(depth), text: `now ${depth.toFixed(1)} m`, now: 1 }, { at: q(before), text: `last year ${before.toFixed(1)}` }], true)}</div>`; };
+  const column = (value, ref, nowText, refText) => { const top = Math.max(value, ref ?? 0) * 1.05 || 1, q = v => cl(v / top * 100);
+    return `<div class="lg"><div class="lg-col box"><span class="lg-fill" style="height:${q(value)}%;background:${BLUE}"></span>${ref != null ? `<span class="lg-fill over" style="height:${q(ref)}%"></span>` : ''}</div>${labels([{ at: q(value), text: nowText, now: 1 }, ...(ref != null ? [{ at: q(ref), text: refText }] : [])])}</div>`; };
+  const describe = c => {
+    if (c.id === 'groundwater') { const n = c.now_same_wells, t = c.last_year_same_wells, d = n - t; return { href: 'groundwater/', value: num(n), unit: 'm', line: 'Depth to water below ground', compare: `${num(Math.abs(d))} m ${d > 0 ? 'deeper' : 'higher'} than last year`, when: upd(c.as_of), g: well(n, t) }; }
+    if (c.id === 'reservoirs') return { href: 'reservoirs/', value: num(c.value, 0), unit: '%', line: `Full, ${num(c.tmc)} of ${num(c.capacity_tmc, 0)} TMC`, compare: `${Math.round(c.value / c.normal * 100)} % of normal for the date`, when: upd(c.as_of), g: tank({ value: c.value, normal: c.normal, lastYear: c.last_year, max: 100, closed: 1, nowText: `now ${num(c.value, 0)}%`, normalText: `normal ${num(c.normal, 0)}%`, lastYearText: `last year ${num(c.last_year, 0)}%` }) };
+    if (c.id === 'rain') { const r = c.imd_season; return { href: 'weather/#s-rain', value: num(r.actual_mm), unit: 'mm', line: `Rain this season, ${day(r.from)} to ${day(r.date)}`, compare: `${Math.round(r.actual_mm / r.normal_mm * 100)} % of normal`, g: tank({ value: r.actual_mm, normal: r.normal_mm, nowText: `now ${num(r.actual_mm)}`, normalText: `normal ${num(r.normal_mm, 0)}` }) }; }
+    const ly = c.month.replace(/^\d{4}/, y => y - 1); return { href: 'tankers/', value: num(c.value, 0), unit: '', line: `Tanker bookings, ${mon(c.month)}`, compare: c.last_year ? `${num(c.value / c.last_year, 1)}× ${mon(ly)}` : null, g: column(c.value, c.last_year, `${mon(c.month)} ${compact(c.value)}`, c.last_year ? `${mon(ly)} ${compact(c.last_year)}` : '') };
+  };
+  const cards = ['groundwater', 'reservoirs', 'rain', 'tankers'].map(id => D.summary?.cards?.find(c => c.id === id)).filter(Boolean);
+  const arrow = '<svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M3 9 L9 3 M4.5 3 H9 V7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  box.innerHTML = cards.length ? `<div class="lc-grid">${cards.map(c => { const d = describe(c); return `<a class="lc" href="${LIVE}${d.href}" target="_blank" rel="noopener"><div class="lc-text"><h3>${c.title}</h3><div class="lc-value">${d.value}${d.unit ? `<span>${d.unit}</span>` : ''}</div><p>${d.line}</p>${d.compare ? `<p class="lc-compare">${d.compare}</p>` : ''}${d.when ? `<p class="lc-when">${d.when}</p>` : ''}<span class="lc-open">Explore ${arrow}</span></div><div class="lc-g">${d.g}</div></a>`; }).join('')}</div>`
+    : `<p class="lc-none">The live numbers could not be loaded. <a href="${LIVE}" target="_blank" rel="noopener">Open the live pages</a>.</p>`;
+  document.getElementById('ct').textContent = 'The latest on the Observatory\'s live pages';
+  alignByline(); setTimeout(alignByline, 60); document.fonts?.ready.then(alignByline);
+  document.getElementById('cs').innerHTML = `Latest readings, not the dates in this story · open a card for the full page · <a href="${LIVE}" target="_blank" rel="noopener" style="color:inherit">All live pages</a>`;
+}
 // Rain each month in 2026 against IMD's normal: the city's TGDPS gauges (mean of the stations each day, summed),
 // the same series as the Weather page; normals IMD Begumpet 1991–2020.
 function RAIN() {
@@ -901,13 +969,13 @@ function drawRain() {
 }
 function showView(v) {
   const [kind, mode] = v.split(':');
-  document.body.dataset.v = mode === 'clips' || mode === 'tanks' ? mode : mode === 'inflows' || mode === 'drought' ? 'tanks' : kind;
+  document.body.dataset.v = mode === 'clips' || mode === 'tanks' ? mode : mode === 'inflows' || mode === 'drought' || mode === 'livecards' ? 'tanks' : kind;
   ['tl', 'sat', 'chart'].forEach(k => document.getElementById('v-' + k).classList.toggle('on', k === kind));
   if (kind === 'chart') {
-    const inf = mode === 'inflows' && D.live, dr = mode === 'drought', tk = (mode === 'tanks' && D.live) || inf || dr;
+    const inf = mode === 'inflows' && D.live, dr = mode === 'drought', lc = mode === 'livecards', tk = (mode === 'tanks' && D.live) || inf || dr || lc;
     const cl = mode === 'clips';
     document.getElementById('tanks').hidden = !tk; document.getElementById('clips').hidden = !cl; document.getElementById('vchart').style.display = tk || cl ? 'none' : '';
-    (dr ? drawDrought : inf ? drawInflows : tk ? drawTanks : cl ? drawClips : mode === 'share' ? drawShare : mode === 'rain' ? drawRain : mode === 'bysource' ? drawBySource : mode === 'pct' ? drawPct : drawYears)();
+    (lc ? drawLiveCards : dr ? drawDrought : inf ? drawInflows : tk ? drawTanks : cl ? drawClips : mode === 'share' ? drawShare : mode === 'rain' ? drawRain : mode === 'bysource' ? drawBySource : mode === 'pct' ? drawPct : drawYears)();
   }
   if (kind === 'sat') document.querySelectorAll('.sat-g').forEach(g => g.style.opacity = g.dataset.on.split(' ').includes(mode) ? 1 : 0);
 }
@@ -1073,16 +1141,17 @@ function cardList() {
              <p>Press reports attributed the poor rainfall to El Niño ${L(['Andhra Jyothy', 'aj149'])}. In September, the Deccan Chronicle reported that Hyderabad may have so far escaped the impact of El Niño, but that this appeared set to change, with Singur "slowly hitting rock bottom levels" ${L(['Deccan Chronicle', 'dc107'])}. Its reserves might last just another 80 days, and about 3 lakh drinking water connections were expected to face restricted supplies once they ran out ${L(['Deccan Chronicle', 'dc107'])}. In October, the Telugu press warned of an impending water crisis in the city ${L(['ETV Bharat', 'etv111'])}.</p>
              <p>Andhra Jyothy reported that Singur water would last until December, and that Krishna and Godavari water would be used if needed. The water board's managing director said drinking water supply faced no difficulty, while environmental experts warned of scarcity for other uses ${L(['Andhra Jyothy', 'aj149'])}.</p>
              <p>In 2018–19 and 2019–20, Singur received meagre inflows and its level touched dead storage. <span class="km">This time, however, it entered the dry year with its storage already restricted and its water released in phases</span> ${L(['Telangana Today', 'tt148'])}.</p>` },
+    { ch: 'events', date: '2026-10-05', view: 'chart:drought', when: 'October 2026', title: 'Drought is declared in 365 mandals',
+      body: `<p><span class="km">By 28 October, the state had declared drought in 365 of its 621 mandals</span>, 111 of them severe and 254 moderate ${L(['Rural Voice', 'rv1028'])}. Sangareddy, where Singur stands, had 28 of them, tied with Nalgonda for the highest number ${L(['Rural Voice', 'rv1028'])}.</p>` },
     { ch: 'events', date: '2026-10-17', view: 'tl', when: 'October 2026', title: 'By October, only a quarter of the bund repairs are complete',
       body: `<p>In March, inspectors of the dam safety authority had expressed dissatisfaction with the quality of the work, and warned that the repairs would not be finished at the current pace ${L(['Telangana Today', 'tt75'])}. By October, <span class="km">only 620 m of the 2,416 m of earthen bund taken up for repair had been completed</span>, and the prospect of storing water to the optimum level even during the next monsoon appeared bleak ${L(['Telangana Today', 'tt123'])}.</p>
              <p>In June, irrigation department sources had said that with the repairs incomplete, the 40,000 acres on the canals would get no irrigation water in the vanakalam and yasangi seasons ${L(['Telangana Today', 'tt92'])}.</p>` },
-    { ch: 'events', date: '2026-10-22', view: 'sat:today', when: 'October 2026', title: 'Parts of the city report water only once every three or four days',
+    { ch: 'events', date: '2026-10-22', view: 'chart:livecards', when: 'October 2026', title: 'Parts of the city report water only once every three or four days',
       body: `<p>Singur and Manjira now supply the city with <b>496 million litres a day instead of 546</b> ${L(['HMWSSB', 'src'])}. NewsMeter reports that the city could face a shortfall of about 227 million litres a day in the coming months ${L(['NewsMeter', 'nm147'])}. In October, the water board decided to cut supply to IIT Hyderabad, BHEL and other organisations by 20–50% ${L(['Telangana Today', 'tt119'])}.</p>
              <p><span class="km">Areas including the Secunderabad Cantonment and the city's outskirts report water once every three or four days</span>, and the water board says it is moving major parts of the city to once every three days ${L(['Siasat', 'si137'])}. Over 20,000 borewells have dried up across Hyderabad and Cyberabad, particularly in the high-rise IT corridors ${L(['Telangana Today', 'tt1015'])}, and gated communities expect tanker costs to push up their maintenance charges ${L(['Times of India', 'toi1027'])}. Eenadu reports that supply from Singur and Manjira now comes once every two days, for 40 to 45 minutes ${L(['Eenadu', 'en1030'])}.</p>
              <p>On 25 October, the state decided to send Godavari water into the Manjira mains ${L(['The Hindu', 'hindu165'])}. Work is under way at Velimela, near the Outer Ring Road, to connect the 3,000 mm Godavari Ring Main with the 1,200 mm Manjira Phase III and IV mains, and the water board's Technical Director and Chief General Manager, who inspected it that day, told officials to complete it quickly ${L(['Siasat', 'si1025'])}. The Chief Minister has told officials to step up alternative arrangements ${L(['Eenadu', 'en1030'])}. Eenadu adds that the work on the link to Godavari Phase 1 is under way and, if it is finished within two months, could address the problem ${L(['Eenadu', 'en1030'])}. That depends on Yellampally, which holds 17.7 of its 20.17 TMC ft, being kept for drinking water alone ${L(['Eenadu', 'en1030'])}.</p>` },
-    { ch: 'events', date: '2026-10-22', view: 'chart:drought', when: 'October 2026', title: 'Drought is declared in 365 mandals, and Singur\'s water may last only until December',
-      body: `<p><span class="km">By 28 October, the state had declared drought in 365 of its 621 mandals</span>, 111 of them severe and 254 moderate ${L(['Rural Voice', 'rv1028'])}. Sangareddy, where Singur stands, had 28 of them, tied with Nalgonda for the highest number ${L(['Rural Voice', 'rv1028'])}.</p>
-             <p>At October's rate of supply, Singur would last until 9 November, and with emergency pumping from its dead storage, until about 10 December ${L(['Deccan Chronicle', 'dc125'])}. Fresh inflows are not expected until next June ${L(['Telangana Today', 'tt119'])}. In June, officials had said that at least 16 TMC ft should be kept aside for the next summer ${L(['Deccan Chronicle', 'dc90'])}. It now holds about 3 TMC ft ${L(['Times of India', 'toi150'])}. <span class="km">Water board officials have told the government that the stocks in Singur and Manjira can be stretched to 60 days at most</span> ${L(['Eenadu', 'en1030'])}.</p>
+    { ch: 'events', date: '2026-10-22', view: 'tl', when: 'Water crisis', title: 'Singur\'s water may last only until December, about six months before fresh inflows',
+      body: `<p>At October's rate of supply, Singur would last until 9 November, and with emergency pumping from its dead storage, until about 10 December ${L(['Deccan Chronicle', 'dc125'])}. Fresh inflows are not expected until next June ${L(['Telangana Today', 'tt119'])}. In June, officials had said that at least 16 TMC ft should be kept aside for the next summer ${L(['Deccan Chronicle', 'dc90'])}. It now holds about 3 TMC ft ${L(['Times of India', 'toi150'])}. <span class="km">Water board officials have told the government that the stocks in Singur and Manjira can be stretched to 60 days at most</span> ${L(['Eenadu', 'en1030'])}.</p>
              <p>On 29 October, the water board's managing director said that the city could face a deficit of up to 50 million gallons a day, about 227 million litres, between January and August next year. The board expects a shortfall of around 100 million gallons a day from Singur and Manjira, and is working to find 60 million gallons more from the Godavari, the Krishna and Osman Sagar. <span class="km">The remaining deficit could affect around three lakh connections between Patancheru and Narsingi</span> ${L(['Deccan Chronicle', 'dc1029'])}.</p>
              <p>In July, the water board decided to draw an additional 114–136 million litres a day of Mission Bhagiratha water from Mallannasagar ${L(['Times of India', 'toi100'])}. Beyond the city, the state is expected to struggle to supply many towns and large rural areas until the 2027 monsoon ${L(['Deccan Chronicle', 'dc127'])}. With only 620 of the 2,416 metres under repair completed, <span class="km">the prospect of storing water to the optimum level even next monsoon appears bleak</span> ${L(['Telangana Today', 'tt123'])}.</p>` },
   ];
@@ -1118,7 +1187,7 @@ function buildArticle() {
       if (kind === 'tl') drawTimeline(q.date);
       const f = copy('v-' + kind);
       if (kind === 'sat') { const v = f.querySelector('[data-was="sat"]'); v.style.cssText = ''; v.classList.add('m-sat'); }
-      if (kind === 'chart' && mode !== 'tanks' && mode !== 'inflows' && mode !== 'drought' && mode !== 'clips') {
+      if (kind === 'chart' && mode !== 'tanks' && mode !== 'inflows' && mode !== 'drought' && mode !== 'livecards' && mode !== 'clips') {
         const v = f.querySelector('[data-was="vchart"]'), w = document.createElement('div');
         w.className = 'm-swipe'; v.parentNode.insertBefore(w, v); w.appendChild(v); v.classList.add('m-chart');
         w.insertAdjacentHTML('afterend', '<div class="m-hint">Swipe sideways to see all of it</div>');
