@@ -617,6 +617,7 @@ function drawSat() {
 }
 function fitSat() {
   const box = document.getElementById('v-sat'), svg = document.getElementById('sat');
+  if (!box || !svg) return;
   const k = Math.min(box.clientWidth / SAT.w, (box.clientHeight - 28) / SAT.h);
   svg.style.width = `${Math.floor(SAT.w * k)}px`; svg.style.height = `${Math.floor(SAT.h * k)}px`;
 }
@@ -624,6 +625,7 @@ function fitSat() {
 // than the image, the top is trimmed, leaving a margin underneath.
 function fitSat() {
   const box = document.getElementById('v-sat'), svg = document.getElementById('sat');
+  if (!box || !svg) return;
   svg.style.height = `${Math.min(box.clientHeight - 24, box.clientWidth * SAT.h / SAT.w)}px`;
 }
 addEventListener('resize', () => fitSat());
@@ -1026,8 +1028,6 @@ function cardList() {
     { ch: 'events', date: '2026-10-22', view: 'tl', when: 'Next summer', title: 'Singur\'s water may last only until December, about six months before fresh inflows',
       body: `<p>At October's rate of supply, Singur would last until 9 November, and with emergency pumping from its dead storage, until about 10 December ${L(['Deccan Chronicle', 'dc125'])}. Fresh inflows are not expected until next June ${L(['Telangana Today', 'tt119'])}. In June, officials had said that at least 16 TMC ft should be kept aside for the next summer ${L(['Deccan Chronicle', 'dc90'])}. It now holds about 3 TMC ft ${L(['Times of India', 'toi150'])}. <span class="km">Water board officials have told the government that the stocks in Singur and Manjira can be stretched to 60 days at most</span> ${L(['Eenadu', 'en1030'])}.</p>
              <p>In July, the water board decided to draw an additional 114–136 million litres a day of Mission Bhagiratha water from Mallannasagar ${L(['Times of India', 'toi100'])}. Beyond the city, the state is expected to struggle to supply many towns and large rural areas until the 2027 monsoon ${L(['Deccan Chronicle', 'dc127'])}. With only 620 of the 2,416 metres under repair completed, <span class="km">the prospect of storing water to the optimum level even next monsoon appears bleak</span> ${L(['Telangana Today', 'tt123'])}.</p>` },
-    { ch: 'events', date: '2026-10-22', view: 'tl', when: 'What is not known', title: 'We could not find the papers behind these decisions',
-      body: `<p><span class="km">We could not find the review panel's report</span>, the dam safety authority's letter of 13 August 2025, the government's letter of 31 December or the repair sanctions in the public domain. What is known of them comes from the press reports that describe them. The figures for storage, inflow and water drawn come from the government's own daily reservoir data. The other sources are cited section by section.</p>` },
     { ch: 'live', date: '2026-10-22', view: 'chart:tanks', when: '', title: 'Follow the current status on the Observatory\'s live pages',
       body: `<p>The figures in this story stop in October 2026, but the situation is still changing. These pages keep following it:</p>
              <ul class="livelinks"><li><a href="https://hyderabad.urbanobservatory.in/live/reservoirs/" target="_blank" rel="noopener">Reservoirs</a> how full each reservoir is, against last year and the average, and the water drawn from each source</li><li><a href="https://hyderabad.urbanobservatory.in/live/tankers/" target="_blank" rel="noopener">Tankers</a> water tanker bookings across the city</li><li><a href="https://hyderabad.urbanobservatory.in/live/weather/" target="_blank" rel="noopener">Weather and air</a> rain against the IMD normal, station by station</li></ul>` },
