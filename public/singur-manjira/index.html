@@ -426,9 +426,9 @@ const fmtMon = ym => new Date(ym + '-01').toLocaleDateString('en-GB', { month: '
 async function main() {
   const [data, geo, arts, corps] = await Promise.all(['data.json', 'geo.json', 'articles.json', 'corps.geojson'].map(n => fetch(`${n}`).then(r => r.json())));
   // today's storage in every reservoir, the same feed as the Reservoirs page
-  const excerpts = await fetch('excerpts.json').then(r => r.json()).catch(() => ({}));
+  const [excerpts, drought] = await Promise.all(['excerpts.json', 'drought.json'].map(n => fetch(n).then(r => r.json()).catch(() => ({}))));
   const [live, wx] = await Promise.all(['reservoirs-history', 'weather-history'].map(n => fetch(`https://api.urbanobservatory.in/live/${n}.json`).then(r => r.json()).catch(() => null)));
-  D = { data, geo, arts, corps, live, wx, excerpts };
+  D = { data, geo, arts, corps, live, wx, excerpts, drought };
   D.pct = { singur: smoothPct('singur'), manjira: smoothPct('manjira') };
   current = data.latest;
   drawSat(); fitSat(); drawArticles('all'); buildCards(); if (innerWidth <= 900) buildArticle(); else bindScroll();
@@ -806,6 +806,25 @@ function drawInflows() {
   alignByline(); setTimeout(alignByline, 60); document.fonts?.ready.then(alignByline);
   document.getElementById('cs').innerHTML = `Running total, TMC ft, to ${fmtDay(L.as_of)} · each panel has its own scale · <a href="/live/reservoirs/" style="color:inherit">Reservoirs page</a>, from <a href="${U.hmwssb}" style="color:inherit">HMWSSB</a>`;
 }
+// Mandals declared drought-affected by G.O.Ms.No.03 (Annexure II), matched to TGRAC's 632 mandals; drought.json holds the
+// paths, already projected. Karimnagar (Rural-II) has no polygon of its own, so 364 of the 365 are drawn.
+function drawDrought() {
+  const M = D.drought, box = document.getElementById('tanks'), FILL = { s: '#CE261E', m: '#F2B8B3', n: '#F3F4F6' };
+  const pt = ([lon, lat]) => [(lon - M.lon0) * M.cos * M.k, (M.lat1 - lat) * M.k];
+  const label = (t, ll, dx, dy, a = 'start') => { const [x, y] = pt(ll); return `<text x="${x + dx}" y="${y + dy}" text-anchor="${a}" font-size="21" font-weight="700" fill="#111827" paint-order="stroke" stroke="#fff" stroke-width="5">${t}</text>`; };
+  const dam = (t, ll, dx, dy, a) => { const [x, y] = pt(ll); return `<circle cx="${x}" cy="${y}" r="7" fill="#3F76B0" stroke="#fff" stroke-width="2"/>` + label(t, ll, dx, dy, a); };
+  const h = Math.max(300, Math.min(innerWidth <= 900 ? 400 : 900, box.parentElement.clientHeight - 80));
+  box.innerHTML = `<div class="tkey"><span><i style="background:${FILL.s}"></i>Severe, 111 mandals</span><span><i style="background:${FILL.m}"></i>Moderate, 254</span><span><i style="background:${FILL.n};outline:1px solid #D1D5DB;outline-offset:-1px"></i>Not declared</span><span><i class="ln" style="border-top:1.5px solid #111827"></i>HMDA boundary</span></div>
+    <svg viewBox="0 0 ${M.w} ${M.h}" style="display:block;width:100%;height:${h}px" role="img" aria-label="Map of Telangana's mandals by drought category">
+      <g stroke="#fff" stroke-width=".8">${M.m.map(m => `<path d="${m[0]}" fill="${FILL[m[1]]}"><title>${m[2]}, ${m[3]}</title></path>`).join('')}</g>
+      <path d="${M.sangareddy}" fill="none" stroke="#111827" stroke-width="1.5" stroke-dasharray="5 4" pointer-events="none"/>
+      <path d="${M.hmda}" fill="none" stroke="#111827" stroke-width="2.2" pointer-events="none"/>
+      ${dam('Singur', [77.95, 17.80], -14, 7, 'end')}${dam('Manjira', [78.075, 17.66], -14, 22, 'end')}
+    </svg>`;
+  document.getElementById('ct').textContent = 'Mandals declared drought-affected';
+  alignByline(); setTimeout(alignByline, 60); document.fonts?.ready.then(alignByline);
+  document.getElementById('cs').textContent = 'G.O.Ms.No.03, Revenue (DM-II), 24 Oct 2026, Annexure II · mandal boundaries, TGRAC · dashed line = Sangareddy district · Karimnagar (Rural-II) has no boundary of its own in the layer, so is not drawn';
+}
 // Rain each month in 2026 against IMD's normal: the city's TGDPS gauges (mean of the stations each day, summed),
 // the same series as the Weather page; normals IMD Begumpet 1991–2020.
 function RAIN() {
@@ -890,13 +909,13 @@ function drawRain() {
 }
 function showView(v) {
   const [kind, mode] = v.split(':');
-  document.body.dataset.v = mode === 'clips' || mode === 'tanks' ? mode : mode === 'inflows' ? 'tanks' : kind;
+  document.body.dataset.v = mode === 'clips' || mode === 'tanks' ? mode : mode === 'inflows' || mode === 'drought' ? 'tanks' : kind;
   ['tl', 'sat', 'chart'].forEach(k => document.getElementById('v-' + k).classList.toggle('on', k === kind));
   if (kind === 'chart') {
-    const inf = mode === 'inflows' && D.live, tk = (mode === 'tanks' && D.live) || inf;
+    const inf = mode === 'inflows' && D.live, dr = mode === 'drought', tk = (mode === 'tanks' && D.live) || inf || dr;
     const cl = mode === 'clips';
     document.getElementById('tanks').hidden = !tk; document.getElementById('clips').hidden = !cl; document.getElementById('vchart').style.display = tk || cl ? 'none' : '';
-    (inf ? drawInflows : tk ? drawTanks : cl ? drawClips : mode === 'share' ? drawShare : mode === 'rain' ? drawRain : mode === 'bysource' ? drawBySource : mode === 'pct' ? drawPct : drawYears)();
+    (dr ? drawDrought : inf ? drawInflows : tk ? drawTanks : cl ? drawClips : mode === 'share' ? drawShare : mode === 'rain' ? drawRain : mode === 'bysource' ? drawBySource : mode === 'pct' ? drawPct : drawYears)();
   }
   if (kind === 'sat') document.querySelectorAll('.sat-g').forEach(g => g.style.opacity = g.dataset.on.split(' ').includes(mode) ? 1 : 0);
 }
@@ -1056,7 +1075,7 @@ function cardList() {
              <p>In the first twelve days, <span class="km">Telangana received 23% less rain than normal</span> ${L(['Telangana Today', 'tt0612'])}.</p>` },
     { ch: 'events', date: '2026-09-21', view: 'chart:rain', when: 'June – October 2026', title: `In Hyderabad, the monsoon brought ${RAIN().dep}% less rain than normal, and October almost none`,
       body: `<p>In Hyderabad, ${RAIN().mon} mm of rain fell between June and September, against a normal of ${RAIN().monN} mm. October, usually still a wet month, brought only ${RAIN().oct} mm against a normal of ${RAIN().octN} mm ${L(['Observatory weather page', 'wx'])}. The Manjira catchment had negligible rain ${L(['Telangana Today', 'tt132'])}.</p>
-             <p>Across Telangana, rainfall from June to September was 17% below normal. <span class="km">By 28 October, the state had declared drought in 365 of its 621 mandals</span>. Sangareddy, where Singur stands, had 28 of them, tied with Nalgonda for the highest number ${L(['Rural Voice', 'rv1028'])}.</p>` },
+             <p>Across Telangana, rainfall from June to September was 17% below normal ${L(['Rural Voice', 'rv1028'])}.</p>` },
     { ch: 'events', date: '2026-09-21', view: 'chart:inflows', when: 'September – October 2026', title: 'No inflows compared to last year',
       body: `<p>Between 1 June and ${fmtDay(D.live.as_of).replace(/ \d{4}$/, '')}, <span class="km">inflows fell at five of the six reservoirs against the same days last year</span>. Singur received <b>${INF('Singur', 2026)} TMC ft</b> against ${INF('Singur', 2025)}, Manjira ${INF('Manjira', 2026)} against ${INF('Manjira', 2025)}, and Yellampally, on the Godavari, ${INF('Yellampally', 2026)} against ${INF('Yellampally', 2025)}. Only Akkampally, which holds Krishna water, received more ${L(['HMWSSB', 'hmwssb'])}. However, inflows into the major reservoirs have dropped sharply from Nagarjuna Sagar to Singur ${L(['Times of India', 'toi1006'])}. On the Krishna, storage in Nagarjuna Sagar has fallen from 305.6 TMC ft a year ago to 183.8 TMC ft, and in Srisailam from 191.7 TMC ft to 57.3 TMC ft ${L(['Times of India', 'toi1026'])}.</p>
              <p>Press reports attributed the poor rainfall to El Niño ${L(['Andhra Jyothy', 'aj149'])}. In September, the Deccan Chronicle reported that Hyderabad may have so far escaped the impact of El Niño, but that this appeared set to change, with Singur "slowly hitting rock bottom levels" ${L(['Deccan Chronicle', 'dc107'])}. Its reserves might last just another 80 days, and about 3 lakh drinking water connections were expected to face restricted supplies once they ran out ${L(['Deccan Chronicle', 'dc107'])}. In October, the Telugu press warned of an impending water crisis in the city ${L(['ETV Bharat', 'etv111'])}.</p>
@@ -1069,8 +1088,9 @@ function cardList() {
       body: `<p>Singur and Manjira now supply the city with <b>496 million litres a day instead of 546</b> ${L(['HMWSSB', 'src'])}. NewsMeter reports that the city could face a shortfall of about 227 million litres a day in the coming months ${L(['NewsMeter', 'nm147'])}. In October, the water board decided to cut supply to IIT Hyderabad, BHEL and other organisations by 20–50% ${L(['Telangana Today', 'tt119'])}.</p>
              <p><span class="km">Areas including the Secunderabad Cantonment and the city's outskirts report water once every three or four days</span>, and the water board says it is moving major parts of the city to once every three days ${L(['Siasat', 'si137'])}. Over 20,000 borewells have dried up across Hyderabad and Cyberabad, particularly in the high-rise IT corridors ${L(['Telangana Today', 'tt1015'])}, and gated communities expect tanker costs to push up their maintenance charges ${L(['Times of India', 'toi1027'])}. Eenadu reports that supply from Singur and Manjira now comes once every two days, for 40 to 45 minutes ${L(['Eenadu', 'en1030'])}.</p>
              <p>On 25 October, the state decided to send Godavari water into the Manjira mains ${L(['The Hindu', 'hindu165'])}. Work is under way at Velimela, near the Outer Ring Road, to connect the 3,000 mm Godavari Ring Main with the 1,200 mm Manjira Phase III and IV mains, and the water board's Technical Director and Chief General Manager, who inspected it that day, told officials to complete it quickly ${L(['Siasat', 'si1025'])}. The Chief Minister has told officials to step up alternative arrangements ${L(['Eenadu', 'en1030'])}. Eenadu adds that the work on the link to Godavari Phase 1 is under way and, if it is finished within two months, could address the problem ${L(['Eenadu', 'en1030'])}. That depends on Yellampally, which holds 17.7 of its 20.17 TMC ft, being kept for drinking water alone ${L(['Eenadu', 'en1030'])}.</p>` },
-    { ch: 'events', date: '2026-10-22', view: 'tl', when: 'Next summer', title: 'Singur\'s water may last only until December, about six months before fresh inflows',
-      body: `<p>At October's rate of supply, Singur would last until 9 November, and with emergency pumping from its dead storage, until about 10 December ${L(['Deccan Chronicle', 'dc125'])}. Fresh inflows are not expected until next June ${L(['Telangana Today', 'tt119'])}. In June, officials had said that at least 16 TMC ft should be kept aside for the next summer ${L(['Deccan Chronicle', 'dc90'])}. It now holds about 3 TMC ft ${L(['Times of India', 'toi150'])}. <span class="km">Water board officials have told the government that the stocks in Singur and Manjira can be stretched to 60 days at most</span> ${L(['Eenadu', 'en1030'])}.</p>
+    { ch: 'events', date: '2026-10-22', view: 'chart:drought', when: 'October 2026', title: 'Drought is declared in 365 mandals, and Singur\'s water may last only until December',
+      body: `<p><span class="km">By 28 October, the state had declared drought in 365 of its 621 mandals</span>, 111 of them severe and 254 moderate ${L(['Rural Voice', 'rv1028'])}. Sangareddy, where Singur stands, had 28 of them, tied with Nalgonda for the highest number ${L(['Rural Voice', 'rv1028'])}.</p>
+             <p>At October's rate of supply, Singur would last until 9 November, and with emergency pumping from its dead storage, until about 10 December ${L(['Deccan Chronicle', 'dc125'])}. Fresh inflows are not expected until next June ${L(['Telangana Today', 'tt119'])}. In June, officials had said that at least 16 TMC ft should be kept aside for the next summer ${L(['Deccan Chronicle', 'dc90'])}. It now holds about 3 TMC ft ${L(['Times of India', 'toi150'])}. <span class="km">Water board officials have told the government that the stocks in Singur and Manjira can be stretched to 60 days at most</span> ${L(['Eenadu', 'en1030'])}.</p>
              <p>On 29 October, the water board's managing director said that the city could face a deficit of up to 50 million gallons a day, about 227 million litres, between January and August next year. The board expects a shortfall of around 100 million gallons a day from Singur and Manjira, and is working to find 60 million gallons more from the Godavari, the Krishna and Osman Sagar. <span class="km">The remaining deficit could affect around three lakh connections between Patancheru and Narsingi</span> ${L(['Deccan Chronicle', 'dc1029'])}.</p>
              <p>In July, the water board decided to draw an additional 114–136 million litres a day of Mission Bhagiratha water from Mallannasagar ${L(['Times of India', 'toi100'])}. Beyond the city, the state is expected to struggle to supply many towns and large rural areas until the 2027 monsoon ${L(['Deccan Chronicle', 'dc127'])}. With only 620 of the 2,416 metres under repair completed, <span class="km">the prospect of storing water to the optimum level even next monsoon appears bleak</span> ${L(['Telangana Today', 'tt123'])}.</p>` },
   ];
@@ -1106,7 +1126,7 @@ function buildArticle() {
       if (kind === 'tl') drawTimeline(q.date);
       const f = copy('v-' + kind);
       if (kind === 'sat') { const v = f.querySelector('[data-was="sat"]'); v.style.cssText = ''; v.classList.add('m-sat'); }
-      if (kind === 'chart' && mode !== 'tanks' && mode !== 'inflows' && mode !== 'clips') {
+      if (kind === 'chart' && mode !== 'tanks' && mode !== 'inflows' && mode !== 'drought' && mode !== 'clips') {
         const v = f.querySelector('[data-was="vchart"]'), w = document.createElement('div');
         w.className = 'm-swipe'; v.parentNode.insertBefore(w, v); w.appendChild(v); v.classList.add('m-chart');
         w.insertAdjacentHTML('afterend', '<div class="m-hint">Swipe sideways to see all of it</div>');

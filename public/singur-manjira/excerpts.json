@@ -165,7 +165,7 @@
 "q": "the Manjeera catchment received negligible rainfall"
 },
 "13.rv1028.1": {
-"q": "Nalgonda and Sangareddy have the highest number of affected mandals, with 28 each"
+"q": "615.5 mm of rainfall against the normal 740.6 mm"
 },
 "14.aj149.1": {
 "q": "ఎల్‌నినో ప్రభావంతో ఈ ఏడాది వర్షాలు సరిగ్గా పడక"
@@ -263,5 +263,11 @@
 },
 "14.toi1026.1": {
 "q": "Nagarjuna Sagar’s storage has fallen from 305.560 TMC a year ago to 183.770 TMC"
+},
+"17.rv1028.1": {
+"q": "111 mandals have been classified as severely drought-affected and 254 as moderately affected"
+},
+"17.rv1028.2": {
+"q": "Nalgonda and Sangareddy have the highest number of affected mandals, with 28 each"
 }
 }
