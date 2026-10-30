@@ -431,7 +431,7 @@ function drawBase() {
   }
   for (const [k, key] of [['singur', 'flow_weekly'], ['manjira', 'flow_weekly_manjira']]) {
     const [t, b] = FLOW[k], mid = (t + b) / 2, h = (b - t) / 2, yy = v => h * Math.min(v, FLOW_MAX) / FLOW_MAX;
-    g += `<text x="0" y="${mid - 2}" font-size="11" fill="#374151">in ▲</text><text x="0" y="${mid + 11}" font-size="11" fill="#6B7280">out ▼</text><text x="34" y="${mid + 4}" font-size="10" fill="#9CA3AF">TMC ft a week</text>`;
+    g += `<text x="0" y="${mid - 2}" font-size="11" fill="#374151">in<tspan x="20">▲</tspan></text><text x="0" y="${mid + 11}" font-size="11" fill="#6B7280">out<tspan x="20">▼</tspan></text><text x="34" y="${mid + 4}" font-size="10" fill="#9CA3AF">TMC ft a week</text>`;
     g += seasonBands(tx, TL, TR, t, b - t, ['2025', '2026'], false) + `<line x1="${TL}" x2="${TR}" y1="${mid}" y2="${mid}" stroke="#D1D5DB"/>`;
     const wk = tx('2025-01-08') - tx('2025-01-01');
     D.data[key].forEach(([w, a, o]) => {
@@ -462,7 +462,7 @@ function axisStrip(HEAD) {
     const ticks = k === 'tankers' ? [[0, '0'], [1500, '1,500']] : k === 'singur' ? [[0, '0'], [29.917, '29.9']] : [[0, '0'], [1.5, '1.5']];
     ticks.forEach(([v, s]) => g += `<text x="${TL - 4}" y="${yv(k, v) + 4}" text-anchor="end" font-size="11" fill="#6B7280">${s}</text>`);
   }
-  for (const k of ['singur', 'manjira']) { const [t, b] = FLOW[k], mid = (t + b) / 2; g += `<text x="2" y="${mid - 2}" font-size="11.5" fill="#374151">in ▲</text><text x="2" y="${mid + 12}" font-size="11.5" fill="#6B7280">out ▼</text><text x="${TL - 4}" y="${t + 9}" text-anchor="end" font-size="10.5" fill="#9CA3AF">50</text>`; }
+  for (const k of ['singur', 'manjira']) { const [t, b] = FLOW[k], mid = (t + b) / 2; g += `<text x="2" y="${mid - 2}" font-size="11.5" fill="#374151">in<tspan x="20">▲</tspan></text><text x="2" y="${mid + 12}" font-size="11.5" fill="#6B7280">out<tspan x="20">▼</tspan></text><text x="${TL - 4}" y="${t + 9}" text-anchor="end" font-size="10.5" fill="#9CA3AF">50</text>`; }
   return g;
 }
 function drawTimeline(date) {
