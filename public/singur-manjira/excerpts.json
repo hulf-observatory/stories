@@ -11,6 +11,9 @@
 "1.dc62.1": {
 "q": "bring the level down to 517.5 metres that will leave 8.17 tmc ft of water"
 },
+"1.toi1006.1": {
+"q": "inflows into major reservoirs have dropped sharply"
+},
 "3.cwc.1": {
 "q": "The Singur dam is located on the Manjeera river."
 },
@@ -51,6 +54,18 @@
 "4.dc47.1": {
 "q": "Several parts of western Hyderabad, including Serilingampally, Patancheru"
 },
+"4.si1006.1": {
+"q": "Singur, the main source for the city's western IT corridor"
+},
+"4.dc0702.1": {
+"q": "A majority of west Hyderabad that includes Cyberabad region and the Financial District"
+},
+"4.toi0613.1": {
+"q": "the rapidly growing western parts of the city"
+},
+"4.en1030.1": {
+"q": "వీటిలోని తొమ్మిది నియోజకవర్గాల ప్రజలకు మంజీరా పైపులైన్ల ద్వారా తాగునీరు సరఫరా అవుతోంది"
+},
 "5.sdso.1": {
 "q": "18 No. of dams classified as category -II and the balance in category-III."
 },
@@ -62,6 +77,15 @@
 },
 "5.go780.1": {
 "q": "Several concrete blocks of the apron have either been displaced or washed away"
+},
+"5.tt24.1": {
+"q": "the water level was maintained at 517.8 metres until 2017"
+},
+"5.tt24.2": {
+"q": "a breach at Singur could have catastrophic consequences"
+},
+"5.dc22.1": {
+"q": "resulting in huge loss of life"
 },
 "6.tt24.1": {
 "q": "The expert committee had previously visited the project in 2016, 2019, and 2024."
@@ -137,29 +161,29 @@
 "12.tt0612.1": {
 "q": "Telangana has recorded a 23 per cent rainfall deficit between June 1 and June 12"
 },
-"13.aj149.1": {
-"q": "ఎల్‌నినో ప్రభావంతో ఈ ఏడాది వర్షాలు సరిగ్గా పడక"
-},
-"13.dc107.1": {
-"q": "Hyderabad may have so far escaped its impact but that appears set to change"
-},
-"13.dc107.2": {
-"q": "has reserves that might last just another 80 days"
-},
-"13.etv111.1": {
-"q": "తరుముకొస్తోన్న జలగండం - భాగ్యనగర వాసులకు ఈసారి నీటి ఘోస తప్పదు!"
-},
-"13.aj149.2": {
-"q": "తాగునీటికి ఇబ్బందులు ఉండవుగానీ.. ఇతరత్రా అవసరాలకు మాత్రం కటకటలాడే పరిస్థితి ఉండొచ్చని పర్యావరణ నిపుణులు హెచ్చరిస్తున్నారు."
-},
-"13.tt148.1": {
-"q": "restricted storage to just 16 TMC ft"
-},
-"14.tt132.1": {
+"13.tt132.1": {
 "q": "the Manjeera catchment received negligible rainfall"
 },
-"14.rv1028.1": {
+"13.rv1028.1": {
 "q": "Nalgonda and Sangareddy have the highest number of affected mandals, with 28 each"
+},
+"14.aj149.1": {
+"q": "ఎల్‌నినో ప్రభావంతో ఈ ఏడాది వర్షాలు సరిగ్గా పడక"
+},
+"14.dc107.1": {
+"q": "Hyderabad may have so far escaped its impact but that appears set to change"
+},
+"14.dc107.2": {
+"q": "has reserves that might last just another 80 days"
+},
+"14.etv111.1": {
+"q": "తరుముకొస్తోన్న జలగండం - భాగ్యనగర వాసులకు ఈసారి నీటి ఘోస తప్పదు!"
+},
+"14.aj149.2": {
+"q": "తాగునీటికి ఇబ్బందులు ఉండవుగానీ.. ఇతరత్రా అవసరాలకు మాత్రం కటకటలాడే పరిస్థితి ఉండొచ్చని పర్యావరణ నిపుణులు హెచ్చరిస్తున్నారు."
+},
+"14.tt148.1": {
+"q": "restricted storage to just 16 TMC ft"
 },
 "15.tt75.1": {
 "q": "The inspecting team also expressed visible dissatisfaction over the quality of the works."
@@ -186,6 +210,24 @@
 "16.hindu165.1": {
 "q": "pipeline interconnection works are underway near Velimela village, close to the Outer Ring Road"
 },
+"16.tt1015.1": {
+"q": "dried up over 20,000 localised borewells, particularly in high-rise IT corridors"
+},
+"16.toi1027.1": {
+"q": "rising tanker procurement costs are expected to push up monthly maintenance charges"
+},
+"16.en1030.1": {
+"q": "రెండు రోజులకు ఒకసారి అదికూడా 40 నుంచి 45 నిమిషాలపాటు మాత్రమే సరఫరా చేస్తున్నారు"
+},
+"16.en1030.2": {
+"q": "ప్రత్యామ్నాయ ఏర్పాట్లు ముమ్మరం చేయాలని సీఎం రేవంత్‌రెడ్డి అధికారులను ఆదేశించారు"
+},
+"16.en1030.3": {
+"q": "రాబోయే రెండు నెలల్లోపు పనులు పూర్తయితే సమస్యను సమర్థంగా ఎదుర్కొనే అవకాశం ఉంటుంది"
+},
+"16.en1030.4": {
+"q": "ఈ నిల్వలను తాగునీటి సరఫరాకు మాత్రమే వాడితేనే గండం నుంచి గట్టెక్కే అవకాశం ఉంటుంది"
+},
 "17.dc125.1": {
 "q": "Singur Water Good Till Nov. 9, With Emergency Pumping Up To Dec. 10"
 },
@@ -207,49 +249,7 @@
 "17.tt123.1": {
 "q": "for optimum level even during the next monsoon appears to be bleak"
 },
-"1.toi1006.1": {
-"q": "inflows into major reservoirs have dropped sharply"
-},
-"4.si1006.1": {
-"q": "Singur, the main source for the city's western IT corridor"
-},
-"4.dc0702.1": {
-"q": "A majority of west Hyderabad that includes Cyberabad region and the Financial District"
-},
-"4.toi0613.1": {
-"q": "the rapidly growing western parts of the city"
-},
-"16.tt1015.1": {
-"q": "dried up over 20,000 localised borewells, particularly in high-rise IT corridors"
-},
-"16.toi1027.1": {
-"q": "rising tanker procurement costs are expected to push up monthly maintenance charges"
-},
-"4.en1030.1": {
-"q": "వీటిలోని తొమ్మిది నియోజకవర్గాల ప్రజలకు మంజీరా పైపులైన్ల ద్వారా తాగునీరు సరఫరా అవుతోంది"
-},
-"16.en1030.1": {
-"q": "రెండు రోజులకు ఒకసారి అదికూడా 40 నుంచి 45 నిమిషాలపాటు మాత్రమే సరఫరా చేస్తున్నారు"
-},
-"16.en1030.2": {
-"q": "ప్రత్యామ్నాయ ఏర్పాట్లు ముమ్మరం చేయాలని సీఎం రేవంత్‌రెడ్డి అధికారులను ఆదేశించారు"
-},
-"16.en1030.3": {
-"q": "రాబోయే రెండు నెలల్లోపు పనులు పూర్తయితే సమస్యను సమర్థంగా ఎదుర్కొనే అవకాశం ఉంటుంది"
-},
-"16.en1030.4": {
-"q": "ఈ నిల్వలను తాగునీటి సరఫరాకు మాత్రమే వాడితేనే గండం నుంచి గట్టెక్కే అవకాశం ఉంటుంది"
-},
 "17.en1030.1": {
 "q": "గరిష్ఠంగా 60 రోజులకు మాత్రమే అతికష్టమ్మీద సర్దుబాటు చేయొచ్చని జలమండలి అధికారులు ప్రభుత్వానికి నివేదిక సమర్పించారు"
-},
-"5.tt24.1": {
-"q": "the water level was maintained at 517.8 metres until 2017"
-},
-"5.tt24.2": {
-"q": "a breach at Singur could have catastrophic consequences"
-},
-"5.dc22.1": {
-"q": "resulting in huge loss of life"
 }
 }
