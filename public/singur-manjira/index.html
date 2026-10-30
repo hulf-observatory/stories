@@ -464,9 +464,9 @@ const fmtMon = ym => new Date(ym + '-01').toLocaleDateString('en-GB', { month: '
 async function main() {
   const [data, geo, arts, corps] = await Promise.all(['data.json', 'geo.json', 'articles.json', 'corps.geojson'].map(n => fetch(`${n}`).then(r => r.json())));
   // today's storage in every reservoir, the same feed as the Reservoirs page
-  const [excerpts, drought] = await Promise.all(['excerpts.json', 'drought.json'].map(n => fetch(n).then(r => r.json()).catch(() => ({}))));
+  const [excerpts, drought, snapshot] = await Promise.all(['excerpts.json', 'drought.json', 'snapshot.json'].map(n => fetch(n).then(r => r.json()).catch(() => ({}))));
   const [live, wx, summary] = await Promise.all(['reservoirs-history', 'weather-history', 'summary'].map(n => fetch(`https://api.urbanobservatory.in/live/${n}.json`).then(r => r.json()).catch(() => null)));
-  D = { data, geo, arts, corps, live, wx, excerpts, drought, summary };
+  D = { data, geo, arts, corps, live, wx, excerpts, drought, summary, frozen: snapshot };   // the story's text and its rain and inflow charts use frozen; the tanks and live cards stay live
   D.pct = { singur: smoothPct('singur'), manjira: smoothPct('manjira') };
   current = data.latest;
   drawSat(); fitSat(); drawArticles('all'); buildCards(); if (innerWidth <= 900) buildArticle(); else bindScroll();
@@ -815,7 +815,7 @@ function drawTanks() {
 // Running total of inflow from 1 June in each reservoir, this year against last year, to the same day; the same
 // series as the Inflow block on the Reservoirs page. Each panel has its own scale.
 function drawInflows() {
-  const L = D.live, box = document.getElementById('tanks'), Y = L.season_year;
+  const L = D.frozen.live, box = document.getElementById('tanks'), Y = L.season_year;
   const res = [...L.res.filter(r => r.city).sort((a, b) => b.ftl - a.ftl), ...L.res.filter(r => !r.city)];
   const phone = innerWidth <= 900, cols = phone ? 2 : 3, cell = Math.floor((box.parentElement.clientWidth - 10 * (cols - 1)) / cols);
   const H = phone ? 120 : Math.max(90, Math.min(innerWidth >= 1600 ? 300 : 190, (box.parentElement.clientHeight - 150) / 2 - 50));
@@ -895,7 +895,7 @@ function drawLiveCards() {
 // the same series as the Weather page; normals IMD Begumpet 1991–2020.
 function RAIN() {
   if (RAIN.v) return RAIN.v;
-  const W = D.wx, mon = {};
+  const W = D.frozen.wx, mon = {};
   for (const r of W.rain) if (r[0] >= '2026-03') mon[r[0].slice(0, 7)] = (mon[r[0].slice(0, 7)] || 0) + r[2];
   const rows = Object.keys(mon).sort().map(k => [k, mon[k], W.normals[+k.slice(5)].rain]);
   const js = rows.filter(r => r[0] >= '2026-06' && r[0] <= '2026-09'), oc = rows.find(r => r[0] === '2026-10');
@@ -978,7 +978,7 @@ function showView(v) {
   document.body.dataset.v = mode === 'clips' || mode === 'tanks' ? mode : mode === 'inflows' || mode === 'drought' || mode === 'livecards' ? 'tanks' : kind;
   ['tl', 'sat', 'chart'].forEach(k => document.getElementById('v-' + k).classList.toggle('on', k === kind));
   if (kind === 'chart') {
-    const inf = mode === 'inflows' && D.live, dr = mode === 'drought', lc = mode === 'livecards', tk = (mode === 'tanks' && D.live) || inf || dr || lc;
+    const inf = mode === 'inflows', dr = mode === 'drought', lc = mode === 'livecards', tk = (mode === 'tanks' && D.live) || inf || dr || lc;
     const cl = mode === 'clips';
     document.getElementById('tanks').hidden = !tk; document.getElementById('clips').hidden = !cl; document.getElementById('vchart').style.display = tk || cl ? 'none' : '';
     (lc ? drawLiveCards : dr ? drawDrought : inf ? drawInflows : tk ? drawTanks : cl ? drawClips : mode === 'share' ? drawShare : mode === 'rain' ? drawRain : mode === 'bysource' ? drawBySource : mode === 'pct' ? drawPct : drawYears)();
@@ -1095,7 +1095,7 @@ function cardList() {
   const s = D.data.series.singur.at(-1), m = D.data.series.manjira.at(-1);
   const may = D.data.tankers.find(t => t[0] === '2026-05');
   const sAt = d => D.data.series.singur.find(p => p[0] >= d && p[1] != null)[1];
-  const INF = (r, y) => { const v = D.live.seasr[r][y]; return v >= 100 ? fmt(Math.round(v)) : v.toFixed(v < 1 ? 2 : 1); };
+  const INF = (r, y) => { const v = D.frozen.live.seasr[r][y]; return v >= 100 ? fmt(Math.round(v)) : v.toFixed(v < 1 ? 2 : 1); };
   const D25 = { ...D.data.draw_2025 }; D25.total = Object.values(D.data.draw_2025).reduce((a, b) => a + b, 0);
   return [
     { ch: 'now', date: T0, isTitle: true, view: 'chart:tanks' },
@@ -1143,7 +1143,7 @@ function cardList() {
       body: `<p>In Hyderabad, ${RAIN().mon} mm of rain fell between June and September, against a normal of ${RAIN().monN} mm. October, usually still a wet month, brought only ${RAIN().oct} mm against a normal of ${RAIN().octN} mm ${L(['Observatory weather page', 'wx'])}. The Manjira catchment had negligible rain ${L(['Telangana Today', 'tt132'])}.</p>
              <p>Across Telangana, rainfall from June to September was 17% below normal ${L(['Rural Voice', 'rv1028'])}.</p>` },
     { ch: 'events', date: '2026-09-21', view: 'chart:inflows', when: 'September – October 2026', title: 'No inflows compared to last year',
-      body: `<p>Between 1 June and ${fmtDay(D.live.as_of).replace(/ \d{4}$/, '')}, <span class="km">inflows fell at five of the six reservoirs against the same days last year</span>. Singur received <b>${INF('Singur', 2026)} TMC ft</b> against ${INF('Singur', 2025)}, Manjira ${INF('Manjira', 2026)} against ${INF('Manjira', 2025)}, and Yellampally, on the Godavari, ${INF('Yellampally', 2026)} against ${INF('Yellampally', 2025)}. Only Akkampally, which holds Krishna water, received more ${L(['HMWSSB', 'hmwssb'])}. However, inflows into the major reservoirs have dropped sharply from Nagarjuna Sagar to Singur ${L(['Times of India', 'toi1006'])}. On the Krishna, storage in Nagarjuna Sagar has fallen from 305.6 TMC ft a year ago to 183.8 TMC ft, and in Srisailam from 191.7 TMC ft to 57.3 TMC ft ${L(['Times of India', 'toi1026'])}.</p>
+      body: `<p>Between 1 June and ${new Date(D.frozen.live.as_of).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}, <span class="km">inflows fell at five of the six reservoirs against the same days last year</span>. Singur received <b>${INF('Singur', 2026)} TMC ft</b> against ${INF('Singur', 2025)}, Manjira ${INF('Manjira', 2026)} against ${INF('Manjira', 2025)}, and Yellampally, on the Godavari, ${INF('Yellampally', 2026)} against ${INF('Yellampally', 2025)}. Only Akkampally, which holds Krishna water, received more ${L(['HMWSSB', 'hmwssb'])}. However, inflows into the major reservoirs have dropped sharply from Nagarjuna Sagar to Singur ${L(['Times of India', 'toi1006'])}. On the Krishna, storage in Nagarjuna Sagar has fallen from 305.6 TMC ft a year ago to 183.8 TMC ft, and in Srisailam from 191.7 TMC ft to 57.3 TMC ft ${L(['Times of India', 'toi1026'])}.</p>
              <p>Press reports attributed the poor rainfall to El Niño ${L(['Andhra Jyothy', 'aj149'])}. In September, the Deccan Chronicle reported that Hyderabad may have so far escaped the impact of El Niño, but that this appeared set to change, with Singur "slowly hitting rock bottom levels" ${L(['Deccan Chronicle', 'dc107'])}. Its reserves might last just another 80 days, and about 3 lakh drinking water connections were expected to face restricted supplies once they ran out ${L(['Deccan Chronicle', 'dc107'])}. In October, the Telugu press warned of an impending water crisis in the city ${L(['ETV Bharat', 'etv111'])}.</p>
              <p>Andhra Jyothy reported that Singur water would last until December, and that Krishna and Godavari water would be used if needed. The water board's managing director said drinking water supply faced no difficulty, while environmental experts warned of scarcity for other uses ${L(['Andhra Jyothy', 'aj149'])}.</p>
              <p>In 2018–19 and 2019–20, Singur received meagre inflows and its level touched dead storage. <span class="km">This time, however, it entered the dry year with its storage already restricted and its water released in phases</span> ${L(['Telangana Today', 'tt148'])}.</p>` },
