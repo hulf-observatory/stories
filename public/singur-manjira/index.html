@@ -381,6 +381,12 @@ body.article .m-chart{display:block;width:640px;max-width:none;height:auto;aspec
 body.article .m-fig .tlwrap{position:relative;height:auto;overflow:hidden}
 body.article .m-tl{position:static;display:block;width:760px;max-width:none;height:439px;margin:0;transition:none}
 body.article .m-axis{position:absolute;left:0;top:0;width:calc(760px * 112 / 900);height:auto;z-index:2;display:block;pointer-events:none;background:#fff}
+body.article .m-pinbox{position:relative;overflow:hidden}
+body.article .m-pin{position:absolute;left:0;top:0;pointer-events:none}
+body.article .m-tail{padding:0 0 12px;margin-top:-10px}
+body.article .m-tail p{font-size:16px;line-height:1.6;color:var(--text-2);margin:0}
+.m-top{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:30;width:40px;height:40px;display:flex;align-items:center;justify-content:center;padding:0;background:#fff;color:var(--ink);border:1px solid var(--border-2);border-radius:4px;cursor:pointer}
+.m-top[hidden]{display:none}
 body.article .m-hint{font-size:11.5px;color:var(--muted);margin-top:4px}
 body.article .scard{transition:none}
 body.article .m-fig .readout{padding:0 0 8px}
@@ -909,7 +915,7 @@ function drawPct() {
     const pts = clean(D.data.series[k]).map(p => [p[0], 100 * p[1] / CAP[k]]);
     g += seasonBands(x, L, W - R, top, PH, ['2024', '2025', '2026'], j === 0);
     [0, 50, 100].forEach(v => g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#E5E7EB" stroke-dasharray="${v ? '3 3' : ''}"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="#6B7280">${v}%</text>`);
-    g += `<text x="${L}" y="${top - 2}" font-size="14" font-weight="700" fill="#111827" dy="-6">${name}</text>`;
+    g += `<text x="${L}" y="${top - 2}" font-size="14" font-weight="700" fill="#111827" dy="-6" data-pin paint-order="stroke" stroke="#fff" stroke-width="3">${name}</text>`;
     g += `<path d="${pts.map((p, i) => `${i ? 'L' : 'M'}${x(p[0]).toFixed(1)},${y(p[1]).toFixed(1)}`).join('')}" fill="none" stroke="#3F76B0" stroke-width="2"/>`;
     const l = pts.at(-1);
     g += `<circle cx="${x(l[0])}" cy="${y(l[1])}" r="5" fill="#CE261E"/><text x="${x(l[0]) + 9}" y="${y(l[1]) + 4}" font-size="13" font-weight="700" fill="#CE261E">${Math.round(l[1])}%</text>`;
@@ -977,7 +983,7 @@ function showView(v) {
     document.getElementById('tanks').hidden = !tk; document.getElementById('clips').hidden = !cl; document.getElementById('vchart').style.display = tk || cl ? 'none' : '';
     (lc ? drawLiveCards : dr ? drawDrought : inf ? drawInflows : tk ? drawTanks : cl ? drawClips : mode === 'share' ? drawShare : mode === 'rain' ? drawRain : mode === 'bysource' ? drawBySource : mode === 'pct' ? drawPct : drawYears)();
   }
-  if (kind === 'sat') document.querySelectorAll('.sat-g').forEach(g => g.style.opacity = g.dataset.on.split(' ').includes(mode) ? 1 : 0);
+  if (kind === 'sat') document.querySelectorAll('#sat .sat-g').forEach(g => g.style.opacity = g.dataset.on.split(' ').includes(mode) ? 1 : 0);
 }
 
 // ---------- story cards (right third) ----------
@@ -1096,7 +1102,7 @@ function cardList() {
     { ch: 'now', date: T0, view: 'chart:pct', when: '', title: 'A dam safety warning, a drawn-down reservoir, and then a dry year',
       body: `<p>Hyderabad could run short of water in the coming months ${L(['NewsMeter', 'nm147'])}. On 22 October, Singur held ${s[1].toFixed(1)} TMC ft, only ${Math.round(100 * s[1] / 29.917)}% of what it can store, its lowest for late October since 2019 ${L(['HMWSSB', 'hmwssb'])}.</p>
              <p>Inflows into major reservoirs have fallen sharply this year, from Nagarjuna Sagar to Singur, but Singur is in the most critical position ${L(['Times of India', 'toi1006'])}. However, this is not only because of El Niño. <span class="km">By June 2025, a dam safety panel had found Singur's earth bank damaged</span> ${L(['Deccan Chronicle', 'dc22'])}. Storage was capped ${L(['Telangana Today', 'tt40'])}, and the government then ordered the reservoir drawn down to 517.5 m, which would leave about 8 TMC ft, as the first phase of emptying it for repairs ${L(['Deccan Chronicle', 'dc62'])}. Thus, when the monsoon of the dry El Niño year arrived in June 2026, Singur held only ${sAt('2026-06-04').toFixed(1)} TMC ft, ${Math.round(100 * sAt('2026-06-04') / 29.917)}% of what it can store ${L(['HMWSSB', 'hmwssb'])}.</p>
-             <p>To understand this, it is first necessary to look at where Hyderabad's water comes from.</p>` },
+             <p class="m-after">To understand this, it is first necessary to look at where Hyderabad's water comes from.</p>` },
     { ch: 'source', date: T0, view: 'chart:share', when: '', title: 'Hyderabad draws its water from six sources',
       body: `<p>In 2025, the water board drew on average about ${fmt(D25.total)} million litres a day. The Krishna supplied ${fmt(D25.krishna)} million litres and the Godavari ${fmt(D25.godavari)}. Singur supplied ${fmt(D25.singur)} and Manjira ${fmt(D25.manjira)}, and the two lakes, Osman Sagar and Himayat Sagar, ${fmt(D25.osmansagar + D25.himayatsagar)} between them ${L(['HMWSSB', 'hmwssb'])}.</p>
              <p><span class="km">Singur and Manjira together supplied <b>${Math.round(100 * (D25.singur + D25.manjira) / D25.total)}%</b>, about a fifth of the city's water.</span></p>` },
@@ -1178,11 +1184,14 @@ function buildArticle() {
   document.body.classList.add('article');
   const secs = [...document.querySelectorAll('.scard')], todo = [];
   const copy = (id) => { const n = document.getElementById(id).cloneNode(true); n.removeAttribute('id'); n.className = 'm-fig'; n.style.cssText = ''; n.querySelectorAll('[id]:not(defs *)').forEach(e => { e.dataset.was = e.id; e.removeAttribute('id'); }); return n; };
+  const seen = new Set();   // a graphic that two sections share on the desktop appears once here
   CARDS.forEach((c, i) => {
     const steps = c.steps || [{ view: c.view, date: c.date }];
     let after = secs[i];
     steps.forEach(q => {
       const [kind, mode] = q.view.split(':');
+      if (kind !== 'tl' && seen.has(q.view)) return;
+      seen.add(q.view);
       showView(q.view);
       if (kind === 'tl') drawTimeline(q.date);
       const f = copy('v-' + kind);
@@ -1191,6 +1200,16 @@ function buildArticle() {
         const v = f.querySelector('[data-was="vchart"]'), w = document.createElement('div');
         w.className = 'm-swipe'; v.parentNode.insertBefore(w, v); w.appendChild(v); v.classList.add('m-chart');
         w.insertAdjacentHTML('afterend', '<div class="m-hint">Swipe sideways to see all of it</div>');
+        // the y-axis stays put and only the x-axis slides: a copy of the axis labels (and any panel titles) over a white strip
+        const P = { pct: 52, share: 52, rain: 46 }[mode], box = document.createElement('div'), pin = v.cloneNode(true);
+        box.className = 'm-pinbox'; w.parentNode.insertBefore(box, w); box.appendChild(w);
+        pin.removeAttribute('data-was'); pin.classList.add('m-pin');
+        [...pin.children].forEach(n => { if (!(n.tagName === 'text' && (+n.getAttribute('x') < P || n.hasAttribute('data-pin')))) n.remove(); });
+        pin.querySelectorAll('[data-pin]').forEach(t => { if (+t.getAttribute('y') < 60) t.setAttribute('y', 20); });   // above the event labels
+        pin.setAttribute('overflow', 'visible');
+        pin.insertAdjacentHTML('afterbegin', `<rect x="-2" width="${P + 2}" height="470" fill="#fff"/>`);
+        box.appendChild(pin);
+        v.querySelectorAll('[data-pin]').forEach(t => t.remove());   // the pinned copy takes their place
         todo.push(() => { w.scrollLeft = w.scrollWidth; });
         f.querySelector('[data-was="tanks"]')?.remove(); f.querySelector('[data-was="clips"]')?.remove();
       } else if (kind === 'chart') {
@@ -1206,6 +1225,8 @@ function buildArticle() {
       }
       after.after(f); after = f;
     });
+    // a sentence that leads on to the next section comes after this section's graphic
+    secs[i].querySelectorAll('.m-after').forEach(p => { const t = document.createElement('div'); t.className = 'm-tail'; t.appendChild(p); after.after(t); after = t; });
   });
   document.querySelector('.main').remove();
   todo.forEach(fn => fn());
@@ -1226,6 +1247,13 @@ function buildArticle() {
     if (CARDS[i].ch !== on) { on = CARDS[i].ch; nav.querySelectorAll('button').forEach(b => { const a = b.dataset.ch === on; b.classList.toggle('on', a); if (a) nav.scrollTo({ left: b.offsetLeft - 16, behavior: 'smooth' }); }); }
   };
   addEventListener('scroll', mark, { passive: true }); mark();
+  const top = document.createElement('button');
+  top.type = 'button'; top.className = 'm-top'; top.hidden = true; top.setAttribute('aria-label', 'Back to the top');
+  top.innerHTML = '<svg viewBox="0 0 12 12" width="14" height="14" aria-hidden="true"><path d="M6 10.5 V2 M2.5 5.5 L6 2 L9.5 5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  top.addEventListener('click', () => { top.blur(); scrollTo({ top: 0, behavior: 'smooth' }); });
+  document.body.appendChild(top);
+  const showTop = () => { top.hidden = scrollY < innerHeight; };
+  addEventListener('scroll', showTop, { passive: true }); showTop();
 }
 // The section nearest the reading line is active; the timeline slides to that section's date.
 // the story always opens at its title, not where the browser last left it
