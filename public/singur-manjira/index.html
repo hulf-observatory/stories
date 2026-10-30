@@ -313,6 +313,34 @@ header.bar{justify-content:space-between;gap:16px}
   .clips figcaption,.tanks .cap,.tanks .tkey{font-size:clamp(12.5px,.72vw,15px)}
   .tanks .cap b{font-size:clamp(14px,.8vw,17px)}
 }
+/* phones: an article, text then graphic */
+body.article .scrolly{display:block;padding:0}
+body.article .cardcol{display:block;padding:12px 16px 8px}
+body.article .chapters{margin:-12px -16px 14px;padding:10px 16px 0}
+body.article .scard{opacity:1;padding:14px 0 10px;scroll-margin-top:0}
+body.article .scard.title{margin-bottom:0;padding-bottom:6px;border-bottom:0}
+body.article .scard.title .stand{margin-bottom:18px!important}
+body.article .scard.title .hint{display:none}
+body.article .m-fig{display:block;position:relative;margin:6px 0 30px;padding:12px 0 0;border-top:1px solid var(--border)}
+body.article .m-fig .chead{padding-bottom:8px;margin-bottom:8px}
+body.article .m-fig .chead .ct{font-size:16px}
+body.article .m-fig .chead .cs{font-size:12.5px;display:block;-webkit-line-clamp:none;overflow:visible}
+body.article .cwrap{overflow:visible;flex:none}
+body.article .tanks .tkey{font-size:11.5px}
+body.article .tanks .cap{font-size:11px}
+body.article .tanks .cap b{font-size:12.5px}
+body.article .clips{margin-top:8px;gap:12px 10px}
+body.article .clips figcaption{font-size:11px;white-space:normal}
+body.article .m-sat{display:block;width:100%;height:auto;aspect-ratio:1748/1375;border-radius:4px}
+body.article .m-swipe{overflow-x:auto;-webkit-overflow-scrolling:touch}
+body.article .m-chart{display:block;width:640px;max-width:none;height:auto;aspect-ratio:900/470}
+body.article .m-fig .tlwrap{position:relative;height:auto;overflow:hidden}
+body.article .m-tl{position:static;display:block;width:760px;max-width:none;height:439px;margin:0;transition:none}
+body.article .m-axis{position:absolute;left:0;top:0;width:calc(760px * 112 / 900);height:auto;z-index:2;display:block;pointer-events:none;background:#fff}
+body.article .m-hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+body.article .scard{transition:none}
+body.article .m-fig .readout{padding:0 0 8px}
+body.article .m-fig .info.on-chart{position:absolute;right:0;left:auto;z-index:3}
 </style>
 </head>
 <body>
@@ -389,7 +417,8 @@ async function main() {
   D = { data, geo, arts, corps, live, wx, excerpts };
   D.pct = { singur: smoothPct('singur'), manjira: smoothPct('manjira') };
   current = data.latest;
-  drawSat(); fitSat(); drawArticles('all'); buildCards(); bindScroll();
+  drawSat(); fitSat(); drawArticles('all'); buildCards(); if (innerWidth <= 900) buildArticle(); else bindScroll();
+  addEventListener('resize', () => { if ((innerWidth <= 900) !== document.body.classList.contains('article')) location.reload(); });
 }
 
 // ---------- data helpers ----------
@@ -724,7 +753,7 @@ function drawTanks() {
   const city = L.res.filter(r => r.city).sort((a, b) => b.ftl - a.ftl), other = L.res.filter(r => !r.city);
   const tot = city.reduce((s, r) => s + r.now, 0), cap = city.reduce((s, r) => s + r.ftl, 0), ly = city.reduce((s, r) => s + r.ly / 100 * r.ftl, 0);
   const phone = innerWidth <= 900, cols = 3, cell = Math.floor((box.parentElement.clientWidth - 10 * (cols - 1)) / cols);
-  const side = phone ? Math.max(44, Math.min(cell - 4, (box.parentElement.clientHeight - 104) / 2)) : Math.max(56, Math.min(innerWidth >= 1600 ? 300 : 150, cell - 92, (box.parentElement.clientHeight - 150) / 2 - 60));
+  const side = phone ? cell - 4 : Math.max(56, Math.min(innerWidth >= 1600 ? 300 : 150, cell - 92, (box.parentElement.clientHeight - 150) / 2 - 60));
   const item = (r, i, note = '') => phone
     ? `<div class="it">${tank({ id: i, w: side, h: side, now: r.pct, avg: r.norm, ly: r.ly, bare: true })}<div class="cap"><b>${r.name} ${Math.round(r.pct)}%</b>avg ${Math.round(r.norm)} · last yr ${Math.round(r.ly)}</div></div>`
     : `<div class="it">${tank({ id: i, w: side, h: side, now: r.pct, avg: r.norm, ly: r.ly })}<div class="cap"><b>${r.name}</b>${note}${r.ftl} TMC ft when full</div></div>`;
@@ -1023,6 +1052,61 @@ function buildCards() {
   LATE.forEach(u => { const l = later.find(q => q[0] === u); if (l) refs.set(u, { n: refs.size + 1, name: l[1] }); });
   document.getElementById('cardcol').innerHTML = `<nav class="chapters" aria-label="Chapters">${Object.entries(CHAPTERS).map(([k, t]) => `<button type="button" data-ch="${k}">${t}</button>`).join('')}</nav>` + CARDS.map((c, i) => c.isTitle ? titleCard : numberRefs(`<article class="scard" data-i="${i}">${c.when ? `<div class="when">${c.when}</div>` : ''}<h3>${c.title}</h3>${keyFor(c)}${c.body}</article>`, refs, i)).join('');
   drawRefs(refs); bindRefPop();
+}
+// Phones read as an ordinary article: each section's text, then its graphic, one after the other, with no fixed frame.
+// The desktop views are drawn once for each section and copied in; wide charts swipe sideways, and the timeline opens at its date.
+function buildArticle() {
+  document.body.classList.add('article');
+  const secs = [...document.querySelectorAll('.scard')], todo = [];
+  const copy = (id) => { const n = document.getElementById(id).cloneNode(true); n.removeAttribute('id'); n.className = 'm-fig'; n.style.cssText = ''; n.querySelectorAll('[id]:not(defs *)').forEach(e => { e.dataset.was = e.id; e.removeAttribute('id'); }); return n; };
+  CARDS.forEach((c, i) => {
+    const steps = c.steps || [{ view: c.view, date: c.date }];
+    let after = secs[i];
+    steps.forEach(q => {
+      const [kind, mode] = q.view.split(':');
+      showView(q.view);
+      if (kind === 'tl') drawTimeline(q.date);
+      const f = copy('v-' + kind);
+      if (kind === 'sat') { const v = f.querySelector('[data-was="sat"]'); v.style.cssText = ''; v.classList.add('m-sat'); }
+      if (kind === 'chart' && mode !== 'tanks' && mode !== 'clips') {
+        const v = f.querySelector('[data-was="vchart"]'), w = document.createElement('div');
+        w.className = 'm-swipe'; v.parentNode.insertBefore(w, v); w.appendChild(v); v.classList.add('m-chart');
+        w.insertAdjacentHTML('afterend', '<div class="m-hint">Swipe sideways to see all of it</div>');
+        todo.push(() => { w.scrollLeft = w.scrollWidth; });
+        f.querySelector('[data-was="tanks"]')?.remove(); f.querySelector('[data-was="clips"]')?.remove();
+      } else if (kind === 'chart') {
+        f.querySelector('[data-was="vchart"]')?.remove();
+        f.querySelector(mode === 'tanks' ? '[data-was="clips"]' : '[data-was="tanks"]')?.remove();
+      }
+      if (kind === 'tl') {
+        const v = f.querySelector('[data-was="tl"]'), a = f.querySelector('[data-was="tl-axis"]'), w = document.createElement('div');
+        w.className = 'm-swipe m-tl-in'; v.style.transform = ''; v.classList.add('m-tl'); v.parentNode.insertBefore(w, v); w.appendChild(v);
+        if (a) a.classList.add('m-axis');
+        w.insertAdjacentHTML('afterend', '<div class="m-hint">Swipe sideways to see all of it</div>');
+        todo.push(() => { w.scrollLeft = tx(q.date) * v.getBoundingClientRect().width / TW - w.clientWidth / 2; });
+      }
+      after.after(f); after = f;
+    });
+  });
+  document.querySelector('.main').remove();
+  todo.forEach(fn => fn());
+  const hdr = () => document.querySelector('header.bar').offsetHeight, nav = document.querySelector('.chapters');
+  const setHdr = () => document.documentElement.style.setProperty('--hdr', hdr() + 'px');
+  setHdr(); addEventListener('resize', setHdr);
+  const go = el => scrollTo({ top: el.getBoundingClientRect().top + scrollY - hdr() - nav.offsetHeight - 8, behavior: 'smooth' });
+  nav.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return; b.blur();
+    if (b.dataset.ch === 'sources') { showBack(scrollY); go(document.getElementById('sources')); return; }
+    const i = CARDS.findIndex(c => c.ch === b.dataset.ch);
+    i ? go(secs[i]) : scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  let on = '';
+  const mark = () => {
+    const line = hdr() + nav.offsetHeight + 60;
+    let i = 0; secs.forEach((e, j) => { if (e.getBoundingClientRect().top < line) i = j; });
+    if (CARDS[i].ch !== on) { on = CARDS[i].ch; nav.querySelectorAll('button').forEach(b => { const a = b.dataset.ch === on; b.classList.toggle('on', a); if (a) nav.scrollTo({ left: b.offsetLeft - 16, behavior: 'smooth' }); }); }
+  };
+  addEventListener('scroll', mark, { passive: true }); mark();
 }
 // The section nearest the reading line is active; the timeline slides to that section's date.
 // the story always opens at its title, not where the browser last left it
