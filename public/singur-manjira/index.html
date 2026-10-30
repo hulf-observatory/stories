@@ -832,7 +832,7 @@ function RAIN() {
 // Singur and Manjira, % full each day from January 2024, one panel each (as on the Reservoirs page), with the
 // three dates the story turns on marked across both
 function drawPct() {
-  const W = 900, H = 470, L = 52, R = 70, T0P = 34, PH = 168, GAP = 64, start = '2024-01-01', end = D.data.series.singur.at(-1)[0];
+  const W = 900, H = 470, L = 52, R = 70, T0P = 46, PH = 162, GAP = 64, start = '2024-01-01', end = D.data.series.singur.at(-1)[0];
   const t = d => Date.parse(d), x = d => L + (W - L - R) * (t(d) - t(start)) / (t(end) - t(start));
   const clean = ser => { const v = ser.filter(p => p[0] >= start && p[1] != null); const med = i => v.slice(Math.max(0, i - 3), i + 4).map(p => p[1]).sort((a, b) => a - b)[3] ?? v[i][1]; return v.filter((p, i) => Math.abs(p[1] - med(i)) <= 0.12 * v[i][1] + 0.05); };
   let g = '';
@@ -847,9 +847,9 @@ function drawPct() {
     g += `<circle cx="${x(l[0])}" cy="${y(l[1])}" r="5" fill="#CE261E"/><text x="${x(l[0]) + 9}" y="${y(l[1]) + 4}" font-size="13" font-weight="700" fill="#CE261E">${Math.round(l[1])}%</text>`;
     ['2024-01-01', '2025-01-01', '2026-01-01'].forEach(d => g += `<text x="${x(d)}" y="${top + PH + 18}" font-size="12" fill="#6B7280" text-anchor="${d === start ? 'start' : 'middle'}">${d.slice(0, 4)}</text>`);
   });
-  const EV = [['2025-03-23', 'Panel inspects', 'end'], ['2025-06-23', 'Cracks reported', 'end'], ['2025-08-08', 'Capped'], ['2026-01-10', 'Drawdown begins']];
+  const EV = [['2025-03-23', 'Panel inspects', 'end', 14], ['2025-06-23', 'Cracks reported', 'end'], ['2025-08-08', 'Capped'], ['2026-01-10', 'Drawdown begins']];
   // labels sit either side of their lines so the close dates do not collide; the lines stop short of the year labels
-  EV.forEach(([d, n, a]) => g += [[T0P - 10, T0P + PH], [T0P + PH + GAP, T0P + 2 * PH + GAP]].map(([y1, y2]) => `<line x1="${x(d)}" x2="${x(d)}" y1="${y1}" y2="${y2}" stroke="#CE261E" stroke-opacity=".7" stroke-dasharray="2 3"/>`).join('') + `<text x="${x(d) + (a === 'end' ? -5 : 5)}" y="${T0P - 14}" text-anchor="${a || 'start'}" font-size="12" fill="#CE261E">${n}</text>`);
+  EV.forEach(([d, n, a, up = 0]) => g += [[T0P - 10 - up, T0P + PH], [T0P + PH + GAP, T0P + 2 * PH + GAP]].map(([y1, y2]) => `<line x1="${x(d)}" x2="${x(d)}" y1="${y1}" y2="${y2}" stroke="#CE261E" stroke-opacity=".7" stroke-dasharray="2 3"/>`).join('') + `<text x="${x(d) + (a === 'end' ? -5 : 5)}" y="${T0P - 14 - up}" text-anchor="${a || 'start'}" font-size="12" fill="#CE261E">${n}</text>`);
   document.getElementById('vchart').innerHTML = g;
   document.getElementById('ct').textContent = 'Singur and Manjira, % full, January 2024 – October 2026';
   document.getElementById('cs').innerHTML = `Share of full storage each day · to ${fmtDay(end)} · <a href="https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx" style="color:inherit">HMWSSB</a>`;
