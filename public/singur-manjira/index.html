@@ -284,6 +284,22 @@ svg text{font-family:Lato,sans-serif}
 .obs-menu[hidden]{display:none}
 header.bar{justify-content:space-between;gap:16px}
 @media (max-width:900px){header.bar{padding:0 16px}}
+/* big screens: the page grows with the window. The graphic is limited by the window's height, so it always fits the frame */
+@media (min-width:1600px){
+  .scrolly{max-width:none;padding:0 clamp(48px,4vw,110px);gap:clamp(40px,3vw,80px);grid-template-columns:calc(162px + 23vw) minmax(0,min(1500px,calc((100vh - 130px) * 1.4)))}
+  .cardcol{grid-template-columns:clamp(130px,8vw,180px) minmax(240px,1fr);column-gap:clamp(32px,2vw,48px)}
+  .chapters button{font-size:clamp(13px,.72vw,16px)}
+  .scard p{font-size:clamp(16px,.92vw,20px)}
+  .scard h3{font-size:clamp(20px,1.2vw,27px)}
+  .scard.title h1{font-size:clamp(30px,1.95vw,44px)}
+  .scard.title .stand{font-size:clamp(17px,1vw,22px)}
+  .scard.title .meta b{font-size:clamp(15px,.85vw,18px)}
+  .scard .when{font-size:clamp(14px,.78vw,17px)}
+  .chead .ct{font-size:clamp(18px,1.1vw,25px)}
+  .chead .cs{font-size:clamp(13px,.74vw,16px)}
+  .clips figcaption,.tanks .cap,.tanks .tkey{font-size:clamp(12.5px,.72vw,15px)}
+  .tanks .cap b{font-size:clamp(14px,.8vw,17px)}
+}
 </style>
 </head>
 <body>
@@ -695,7 +711,7 @@ function drawTanks() {
   const city = L.res.filter(r => r.city).sort((a, b) => b.ftl - a.ftl), other = L.res.filter(r => !r.city);
   const tot = city.reduce((s, r) => s + r.now, 0), cap = city.reduce((s, r) => s + r.ftl, 0), ly = city.reduce((s, r) => s + r.ly / 100 * r.ftl, 0);
   const cols = innerWidth <= 900 ? 2 : 3, cell = Math.floor((box.parentElement.clientWidth - 10 * (cols - 1)) / cols);
-  const side = Math.max(56, Math.min(150, cell - 92, innerWidth <= 900 ? 999 : (box.parentElement.clientHeight - 150) / 2 - 60));
+  const side = Math.max(56, Math.min(innerWidth >= 1600 ? 300 : 150, cell - 92, innerWidth <= 900 ? 999 : (box.parentElement.clientHeight - 150) / 2 - 60));
   const item = (r, i, note = '') => `<div class="it">${tank({ id: i, w: side, h: side, now: r.pct, avg: r.norm, ly: r.ly })}<div class="cap"><b>${r.name}</b>${note}${r.ftl} TMC ft when full</div></div>`;
   box.innerHTML = `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="tk-hatch" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="rgba(206,38,30,.6)" stroke-width="1.5"/></pattern></defs></svg>
     <div class="tkey"><span><i style="background:#7FA6CE"></i>Today</span><span><i class="ln" style="border-top:1.5px dashed #111827"></i>avg = ${MONTH} average, 2014–${L.prev}</span><span><i class="ln" style="border-top:1.5px solid #6B7280"></i>last yr = this date in ${L.prev}</span><span><i style="background:repeating-linear-gradient(135deg,rgba(206,38,30,.6) 0 1.5px,transparent 1.5px 5px);border:1px solid #D1D5DB"></i>below the average</span></div>
