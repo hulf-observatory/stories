@@ -390,8 +390,8 @@ const WEST = '#185FA5', REST = '#C4C8CF';
 // Events: date, label on the timeline, what the readout says, source.
 const EVENTS = [
   ['2025-03-23', 'Panel inspects', 'A dam safety panel inspects Singur and finds the revetment of its earth dam damaged.', ['Telangana Today', 'https://telanganatoday.com/sangareddy-singur-reservoir-at-risk-of-breach-if-water-exceeds-517-metres']],
-  ['2025-06-23', 'Cracks found', 'An inspection finds vertical cracks across the earthen bund, and cracks in the parapet wall.', ['Telangana Today', 'https://telanganatoday.com/ndsa-orders-urgent-repairs-on-singur-dam-state-scales-down-storage-by-10-tmc']],
-  ['2025-08-08', 'Storage capped', 'The warning reaches the papers, and storage is restricted.', ['Telangana Today', 'https://telanganatoday.com/singur-water-storage-capped-at-22-tmcft-due-to-safety-concerns']],
+  ['2025-06-23', 'Cracks reported', 'Reports describe vertical cracks across the earthen bund, and cracks in the parapet wall.', ['Telangana Today', 'https://telanganatoday.com/ndsa-orders-urgent-repairs-on-singur-dam-state-scales-down-storage-by-10-tmc']],
+  ['2025-08-08', 'Storage capped', 'The panel\'s warning is reported, and storage is restricted.', ['Telangana Today', 'https://telanganatoday.com/singur-water-storage-capped-at-22-tmcft-due-to-safety-concerns']],
   ['2025-10-04', 'Record inflow', 'The highest inflow since the dam was commissioned. With the cap in place, most of it is released downstream.', ['Telangana Today', 'https://telanganatoday.com/singur-reservoir-breaks-27-year-inflow-record-amid-heavy-rains']],
   ['2025-11-22', 'Decision to empty', 'Irrigation officials decide to empty Singur in phases for repairs.', ['Telangana Today', 'https://telanganatoday.com/singur-reservoir-to-be-emptied-from-december-1-for-major-repair-works']],
   ['2026-01-10', 'Drawdown begins', 'The drawdown begins.', ['Telangana Today', 'https://telanganatoday.com/irrigation-department-begins-drawdown-of-singur-reservoir-for-repairs']],
@@ -399,9 +399,10 @@ const EVENTS = [
   ['2026-04-13', 'El Niño forecast', 'IMD forecasts a below-normal monsoon, 92% of the long-period average, as El Niño develops.', ['Down To Earth', 'https://www.downtoearth.org.in/climate-change/south-west-monsoon-rainfall-to-be-below-normal-or-deficient-in-2026']],
   ['2026-06-01', 'Emergency pumping', 'Emergency pumps, 17 installed, are due to start at Singur.', ['NewsMeter', 'https://newsmeter.in/hyderabad/hyderabad-water-crisis-emergency-water-pumping-from-singur-reservoir-to-start-from-june-1-768993']],
   ['2026-06-04', 'Monsoon late', 'The monsoon reaches Kerala three days late, and IMD cuts its forecast to 90% of normal.', ['Down To Earth', 'https://www.downtoearth.org.in/climate-change/monsoon-2026-has-arrived-but-indias-rain-season-begins-under-el-ni%C3%B1o-shadow']],
-  ['2026-09-21', 'El Niño warning', 'The Deccan Chronicle reports a "super" El Niño building and Singur heading for rock bottom.', ['Deccan Chronicle', 'https://www.deccanchronicle.com/southern-states/telangana/el-nino-impact-closing-in-on-hyderabad-drinking-water-supply-to-take-a-hit-1989412']],
+  ['2026-09-21', 'El Niño warning', 'The Deccan Chronicle reports that Hyderabad may not escape the impact of El Niño, with Singur "slowly hitting rock bottom levels".', ['Deccan Chronicle', 'https://www.deccanchronicle.com/southern-states/telangana/el-nino-impact-closing-in-on-hyderabad-drinking-water-supply-to-take-a-hit-1989412'], -10],
   ['2026-10-17', 'Repairs lag', 'Only 620 m of the 2,416 m bund has been rebuilt.', ['Telangana Today', 'https://telanganatoday.com/singur-project-repairs-lag-only-620-metres-of-earthen-bund-completed']],
-  ['2026-10-28', 'Drought declared', 'Telangana declares drought in 365 of its 621 mandals after June–September rain falls 17% below normal.', ['Rural Voice', 'https://eng.ruralvoice.in/state/telangana-declares-drought-in-365-mandals-across-31-districts.html']],
+  ['2026-10-25', 'Godavari link', 'Work is under way at Velimela to connect the Godavari Ring Main with the Manjira mains.', ['Siasat', 'https://www.siasat.com/godavari-water-to-meet-shortfall-in-singur-manjira-reservoirs-3564360/']],
+  ['2026-10-28', 'Drought', 'Telangana declares drought in 365 of its 621 mandals after June–September rain falls 17% below normal.', ['Rural Voice', 'https://eng.ruralvoice.in/state/telangana-declares-drought-in-365-mandals-across-31-districts.html']],
 ];
 let D, current;
 const fmt = n => Math.round(n).toLocaleString('en-IN');
@@ -530,17 +531,17 @@ function drawTimeline(date) {
   // each label goes in the lowest of three rows where it clears the one before it (bold width allowed for)
   if (!drawTimeline.rows) {
     const end = [-1e9, -1e9, -1e9];
-    drawTimeline.rows = EVENTS.map(([d, t]) => {
-      const x = tx(d), w = t.length * 6.6 + 10, l = x > TR - 50 ? Math.min(x, TR - 2) - w : x - w / 2;
-      const r = Math.max(0, end.findIndex(e => e < l)); end[r] = l + w; return [56, 36, 16][r];
+    drawTimeline.rows = EVENTS.map(([d, t, , , dx = 0]) => {
+      const x = tx(d) + dx, w = t.length * 6.6 + 10, l = x > TR - 100 ? Math.min(x, TR - 2) - w : x - w / 2;
+      let r = end.findIndex(e => e < l); if (r < 0) r = end.indexOf(Math.min(...end)); end[r] = l + w; return [56, 36, 16][r];
     });
   }
-  EVENTS.forEach(([d, t], i) => {
+  EVENTS.forEach(([d, t, , , dx = 0], i) => {
     const x = tx(d), past = d <= date, now = nowEv && nowEv[0] === d, c = now ? '#111827' : past ? '#6B7280' : '#C4C8CF';
     const ly = drawTimeline.rows[i];
     g += `<g class="ev" data-d="${d}" style="cursor:pointer"><line x1="${x}" x2="${x}" y1="${ly + 5}" y2="${LANES.tankers[1]}" stroke="${c}" stroke-width="${now ? 1.4 : .9}" stroke-dasharray="${now ? '' : '2 3'}"/>`;
     g += `<circle cx="${x}" cy="${AX}" r="${now ? 5 : 3.5}" fill="${past ? '#111827' : '#fff'}" stroke="${now ? '#111827' : c}" stroke-width="1.2"/>`;
-    g += `<rect x="${x - 60}" y="${ly - 13}" width="120" height="18" fill="transparent"/><text x="${Math.min(x, TR - 2)}" y="${ly}" text-anchor="${x > TR - 50 ? 'end' : 'middle'}" font-size="11.5" font-weight="${now ? 700 : 400}" fill="${now ? '#111827' : past ? '#374151' : '#9CA3AF'}">${t}</text></g>`;
+    g += `<rect x="${x - 60}" y="${ly - 13}" width="120" height="18" fill="transparent"/><text x="${Math.min(x + dx, TR - 2)}" y="${ly}" text-anchor="${x > TR - 100 ? 'end' : 'middle'}" font-size="11.5" font-weight="${now ? 700 : 400}" fill="${now ? '#111827' : past ? '#374151' : '#9CA3AF'}">${t}</text></g>`;
   });
   const x = tx(date), ps = pctOn('singur', date), pm = pctOn('manjira', date), tk = tankOn(date);
   g += `<rect x="${x}" y="${AX + 20}" width="${TR - x}" height="${TH - AX - 20}" fill="#fff" opacity=".55" pointer-events="none"/>`;
@@ -763,6 +764,35 @@ function drawTanks() {
   alignByline(); setTimeout(alignByline, 60); document.fonts?.ready.then(alignByline);
   document.getElementById('cs').innerHTML = `Each square is one reservoir, all drawn the same size · water = share full on ${fmtDay(L.as_of)} · <a href="/live/reservoirs/" style="color:inherit">Reservoirs page</a>, from <a href="https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx" style="color:inherit">HMWSSB</a>`;
 }
+// Running total of inflow from 1 June in each reservoir, this year against last year, to the same day; the same
+// series as the Inflow block on the Reservoirs page. Each panel has its own scale.
+function drawInflows() {
+  const L = D.live, box = document.getElementById('tanks'), Y = L.season_year;
+  const res = [...L.res.filter(r => r.city).sort((a, b) => b.ftl - a.ftl), ...L.res.filter(r => !r.city)];
+  const phone = innerWidth <= 900, cols = phone ? 2 : 3, cell = Math.floor((box.parentElement.clientWidth - 10 * (cols - 1)) / cols);
+  const H = phone ? 120 : Math.max(90, Math.min(innerWidth >= 1600 ? 300 : 190, (box.parentElement.clientHeight - 150) / 2 - 50));
+  const MON = [['Jun', 0], ['Aug', 61], ['Oct', 122]], num = v => v >= 100 ? fmt(Math.round(v)) : v.toFixed(v < 1 ? 2 : 1);
+  const panel = r => {
+    const c = L.cumr[r.name], end = c.now.at(-1)[0], prev = c.prev.filter(p => p[0] <= end), a = c.now.at(-1)[1], b = prev.at(-1)[1];
+    const W = cell - 4, R = phone ? 42 : 58, T = 8, B = 20, top = Math.max(a, b) || 1;
+    const x = d => (W - R) * d / end, y = v => T + (H - T - B) * (1 - v / top), line = ser => ser.map((p, i) => `${i ? 'L' : 'M'}${x(p[0]).toFixed(1)},${y(p[1]).toFixed(1)}`).join('');
+    let ya = y(a), yb = y(b);
+    if (Math.abs(ya - yb) < 15) { const m = (ya + yb) / 2, s = a >= b ? -1 : 1; ya = m + s * 7.5; yb = m - s * 7.5; }
+    return `<div class="it"><svg width="${W}" height="${H}" role="img" aria-label="${r.name}: ${num(a)} TMC ft since 1 June, against ${num(b)} by this date last year">
+      <line x1="0" x2="${W - R}" y1="${H - B}" y2="${H - B}" stroke="#9CA3AF"/>
+      ${MON.filter(m => m[1] <= end).map(([t, d]) => `<text x="${x(d)}" y="${H - 5}" font-size="11" fill="#6B7280" text-anchor="${d ? 'middle' : 'start'}">${t}</text>`).join('')}
+      <path d="${line(prev)}" fill="none" stroke="#6B7280" stroke-width="1.5"/>
+      <path d="${line(c.now)}" fill="none" stroke="#3F76B0" stroke-width="2.5"/>
+      <text x="${W - R + 6}" y="${yb + 4}" font-size="12" fill="#6B7280">${num(b)}</text>
+      <text x="${W - R + 6}" y="${ya + 4}" font-size="12" font-weight="700" fill="#111827">${num(a)}</text></svg>
+      <div class="cap"><b>${r.name}</b>${r.city ? '' : 'Godavari, not in the city total'}</div></div>`;
+  };
+  box.innerHTML = `<div class="tkey"><span><i class="ln" style="border-top:2.5px solid #3F76B0"></i>${Y}</span><span><i class="ln" style="border-top:1.5px solid #6B7280"></i>${Y - 1}, to the same date</span></div>
+    <div class="grid" style="grid-template-columns:repeat(${cols},1fr)">${res.map(panel).join('')}</div>`;
+  document.getElementById('ct').textContent = 'Inflows since 1 June';
+  alignByline(); setTimeout(alignByline, 60); document.fonts?.ready.then(alignByline);
+  document.getElementById('cs').innerHTML = `Running total, TMC ft, to ${fmtDay(L.as_of)} · each panel has its own scale · <a href="/live/reservoirs/" style="color:inherit">Reservoirs page</a>, from <a href="${U.hmwssb}" style="color:inherit">HMWSSB</a>`;
+}
 // Rain each month in 2026 against IMD's normal: the city's TGDPS gauges (mean of the stations each day, summed),
 // the same series as the Weather page; normals IMD Begumpet 1991–2020.
 function RAIN() {
@@ -793,7 +823,7 @@ function drawPct() {
     g += `<circle cx="${x(l[0])}" cy="${y(l[1])}" r="5" fill="#CE261E"/><text x="${x(l[0]) + 9}" y="${y(l[1]) + 4}" font-size="13" font-weight="700" fill="#CE261E">${Math.round(l[1])}%</text>`;
     ['2024-01-01', '2025-01-01', '2026-01-01'].forEach(d => g += `<text x="${x(d)}" y="${top + PH + 18}" font-size="12" fill="#6B7280" text-anchor="${d === start ? 'start' : 'middle'}">${d.slice(0, 4)}</text>`);
   });
-  const EV = [['2025-03-23', 'Panel inspects', 'end'], ['2025-06-23', 'Cracks', 'end'], ['2025-08-08', 'Capped'], ['2026-01-10', 'Drawdown begins']];
+  const EV = [['2025-03-23', 'Panel inspects', 'end'], ['2025-06-23', 'Cracks reported', 'end'], ['2025-08-08', 'Capped'], ['2026-01-10', 'Drawdown begins']];
   // labels sit either side of their lines so the close dates do not collide; the lines stop short of the year labels
   EV.forEach(([d, n, a]) => g += [[T0P - 10, T0P + PH], [T0P + PH + GAP, T0P + 2 * PH + GAP]].map(([y1, y2]) => `<line x1="${x(d)}" x2="${x(d)}" y1="${y1}" y2="${y2}" stroke="#CE261E" stroke-opacity=".7" stroke-dasharray="2 3"/>`).join('') + `<text x="${x(d) + (a === 'end' ? -5 : 5)}" y="${T0P - 14}" text-anchor="${a || 'start'}" font-size="12" fill="#CE261E">${n}</text>`);
   document.getElementById('vchart').innerHTML = g;
@@ -847,13 +877,13 @@ function drawRain() {
 }
 function showView(v) {
   const [kind, mode] = v.split(':');
-  document.body.dataset.v = mode === 'clips' || mode === 'tanks' ? mode : kind;
+  document.body.dataset.v = mode === 'clips' || mode === 'tanks' ? mode : mode === 'inflows' ? 'tanks' : kind;
   ['tl', 'sat', 'chart'].forEach(k => document.getElementById('v-' + k).classList.toggle('on', k === kind));
   if (kind === 'chart') {
-    const tk = mode === 'tanks' && D.live;
+    const inf = mode === 'inflows' && D.live, tk = (mode === 'tanks' && D.live) || inf;
     const cl = mode === 'clips';
     document.getElementById('tanks').hidden = !tk; document.getElementById('clips').hidden = !cl; document.getElementById('vchart').style.display = tk || cl ? 'none' : '';
-    (tk ? drawTanks : cl ? drawClips : mode === 'share' ? drawShare : mode === 'rain' ? drawRain : mode === 'bysource' ? drawBySource : mode === 'pct' ? drawPct : drawYears)();
+    (inf ? drawInflows : tk ? drawTanks : cl ? drawClips : mode === 'share' ? drawShare : mode === 'rain' ? drawRain : mode === 'bysource' ? drawBySource : mode === 'pct' ? drawPct : drawYears)();
   }
   if (kind === 'sat') document.querySelectorAll('.sat-g').forEach(g => g.style.opacity = g.dataset.on.split(' ').includes(mode) ? 1 : 0);
 }
@@ -890,6 +920,7 @@ const U = {
   tt32: 'https://telanganatoday.com/ndsa-orders-urgent-repairs-on-singur-dam-state-scales-down-storage-by-10-tmc',
   ttpump: 'https://telanganatoday.com/hmwssb-activates-emergency-pumping-at-singur-reservoir-to-sustain-hyderabad-water-supply', dc50: 'https://www.deccanchronicle.com/southern-states/telangana/singur-dam-safety-clock-starts-ticking-for-emptying-reservoir-from-dec-1-1918946', nie26: 'https://www.newindianexpress.com/states/telangana/2025/Aug/09/singur-dam-water-storage-to-be-limited-to-20-tmcft', cwc0101: 'https://rsms.cwc.gov.in/admin/storage/bulletins/bulletin-01-01-2026-73.pdf', tt25: 'https://telanganatoday.com/singur-water-storage-capped-at-22-tmcft-due-to-safety-concerns',
   toi1006: 'https://timesofindia.indiatimes.com/city/hyderabad/as-reservoirs-run-low-hyd-stares-at-drinking-water-crisis-by-year-end/articleshow/134716388.cms', si1006: 'https://www.siasat.com/hyderabads-water-crisis-may-hit-in-december-not-summer-3553096/', dc0702: 'https://www.deccanchronicle.com/southern-states/telangana/cwc-hints-at-shortages-warns-state-to-use-water-wisely-1967932', toi0613: 'https://timesofindia.indiatimes.com/city/hyderabad/water-supply-hit-due-to-ageing-manjeera-pipeline-network/articleshow/131707738.cms', tt1015: 'https://telanganatoday.com/unseasonal-surge-hmwssb-faces-summer-like-tanker-demand-in-october', toi1027: 'https://timesofindia.indiatimes.com/city/hyderabad/hyderabads-water-tanker-bills-set-to-cross-100-crore-as-crisis-deepens/articleshow/135243282.cms',
+  si1025: 'https://www.siasat.com/godavari-water-to-meet-shortfall-in-singur-manjira-reservoirs-3564360/', dc1029: 'https://www.deccanchronicle.com/southern-states/telangana/hmwssb-launches-paani-app-as-hyderabad-faces-possible-50-mgd-water-deficit-2000076',
   en1030: 'https://www.eenadu.net/telugu-news/telangana/drinking-water-crisis-looms-over-the-hyderabad/1899/126197026',
   dte13: 'https://www.downtoearth.org.in/climate-change/south-west-monsoon-rainfall-to-be-below-normal-or-deficient-in-2026', dte604: 'https://www.downtoearth.org.in/climate-change/monsoon-2026-has-arrived-but-indias-rain-season-begins-under-el-ni%C3%B1o-shadow',
   tt0612: 'https://telanganatoday.com/telangana-records-23-per-cent-rainfall-deficit-in-first-12-days-of-monsoon', rv1028: 'https://eng.ruralvoice.in/state/telangana-declares-drought-in-365-mandals-across-31-districts.html', wx: 'https://hyderabad.urbanobservatory.in/live/weather/',
@@ -972,33 +1003,33 @@ function cardList() {
     { ch: 'now', date: T0, isTitle: true, view: 'chart:tanks' },
     { ch: 'now', date: T0, view: 'chart:pct', when: '', title: 'A dam safety warning, a drawn-down reservoir, and then a dry year',
       body: `<p>Hyderabad could run short of water in the coming months ${L(['NewsMeter', 'nm147'])}. On 22 October, Singur held ${s[1].toFixed(1)} TMC ft, only ${Math.round(100 * s[1] / 29.917)}% of what it can store, its lowest for late October since 2019 ${L(['HMWSSB', 'hmwssb'])}.</p>
-             <p>Inflows into major reservoirs have fallen sharply this year, from Nagarjuna Sagar to Singur, but Singur is in the most critical position ${L(['Times of India', 'toi1006'])}. That is not only about El Niño. <span class="km">By June 2025, a dam safety panel had found Singur's earth bank damaged</span> ${L(['Deccan Chronicle', 'dc22'])}. Storage was capped ${L(['Telangana Today', 'tt40'])}, and the government then ordered the reservoir drawn down to 517.5 m, which would leave about 8 TMC ft, as the first phase of emptying it for repairs ${L(['Deccan Chronicle', 'dc62'])}. So when the monsoon of the dry El Niño year arrived in June 2026, Singur held only ${sAt('2026-06-04').toFixed(1)} TMC ft, ${Math.round(100 * sAt('2026-06-04') / 29.917)}% of what it can store ${L(['HMWSSB', 'hmwssb'])}.</p>
-             <p>Before following that story, it helps to understand where Hyderabad's water comes from.</p>` },
+             <p>Inflows into major reservoirs have fallen sharply this year, from Nagarjuna Sagar to Singur, but Singur is in the most critical position ${L(['Times of India', 'toi1006'])}. However, this is not only because of El Niño. <span class="km">By June 2025, a dam safety panel had found Singur's earth bank damaged</span> ${L(['Deccan Chronicle', 'dc22'])}. Storage was capped ${L(['Telangana Today', 'tt40'])}, and the government then ordered the reservoir drawn down to 517.5 m, which would leave about 8 TMC ft, as the first phase of emptying it for repairs ${L(['Deccan Chronicle', 'dc62'])}. Thus, when the monsoon of the dry El Niño year arrived in June 2026, Singur held only ${sAt('2026-06-04').toFixed(1)} TMC ft, ${Math.round(100 * sAt('2026-06-04') / 29.917)}% of what it can store ${L(['HMWSSB', 'hmwssb'])}.</p>
+             <p>To understand this, it is first necessary to look at where Hyderabad's water comes from.</p>` },
     { ch: 'source', date: T0, view: 'chart:share', when: '', title: 'Hyderabad draws its water from six sources',
-      body: `<p>In 2025, the water board drew on average about ${fmt(D25.total)} million litres a day. The Krishna gave ${fmt(D25.krishna)} million litres and the Godavari ${fmt(D25.godavari)}. Singur gave ${fmt(D25.singur)} and Manjira ${fmt(D25.manjira)}, and the two lakes, Osman Sagar and Himayat Sagar, ${fmt(D25.osmansagar + D25.himayatsagar)} between them ${L(['HMWSSB', 'hmwssb'])}.</p>
-             <p><span class="km">Singur and Manjira together gave <b>${Math.round(100 * (D25.singur + D25.manjira) / D25.total)}%</b>, about a fifth of the city's water.</span></p>` },
-    { ch: 'source', date: T0, view: 'sat:dams', when: '', title: 'Singur holds 29.9 TMC ft when full, and Manjira, downstream of it, 1.5',
+      body: `<p>In 2025, the water board drew on average about ${fmt(D25.total)} million litres a day. The Krishna supplied ${fmt(D25.krishna)} million litres and the Godavari ${fmt(D25.godavari)}. Singur supplied ${fmt(D25.singur)} and Manjira ${fmt(D25.manjira)}, and the two lakes, Osman Sagar and Himayat Sagar, ${fmt(D25.osmansagar + D25.himayatsagar)} between them ${L(['HMWSSB', 'hmwssb'])}.</p>
+             <p><span class="km">Singur and Manjira together supplied <b>${Math.round(100 * (D25.singur + D25.manjira) / D25.total)}%</b>, about a fifth of the city's water.</span></p>` },
+    { ch: 'source', date: T0, view: 'sat:dams', when: '', title: 'Singur holds 29.9 TMC ft when full, and Manjira, downstream of it, 1.5 TMC ft',
       body: `<p>Singur and, downstream of it, Manjira are on the Manjira river, north-west of the city ${L(['CWC', 'cwc'], ['Deccan Chronicle', 'dc22'])}. The map also shows Osman Sagar and Himayat Sagar. The Krishna and the Godavari lie outside it.</p>
              <p>Singur has an earth dam 6.7 km long and a masonry section of 330 m across the Manjira in Sangareddy district, with 17 spillway gates ${L(['CWC', 'cwc'])}. When full, it holds <b>29.9 TMC ft</b> ${L(['Telangana Today', 'tt24'])}, or thousand million cubic feet ${L(['Siasat', 'si137'])}. Its water goes to the city, to about 40,000 acres along its canals, to the Mission Bhagiratha drinking water schemes and to irrigation further downstream ${L(['GO Rt 885', 'go885'], ['Telangana Today', 'tt60'])}.</p>
-             <p>The Manjira dam is much smaller, with a storage capacity of <b>1.5 TMC ft</b> ${L(['Telangana Today', 'tt14'], ['GO Rt 780', 'go780'])}. It is replenished by flows from Singur, so <span class="km">when Singur runs low, Manjira follows</span> ${L(['Deccan Chronicle', 'dc47'])}. A government order of March 2026 says that only 70% of the designed quantity is now drawn through its pipelines ${L(['GO Rt 315', 'go315'])}.</p>` },
+             <p>The Manjira dam is much smaller, with a storage capacity of <b>1.5 TMC ft</b> ${L(['Telangana Today', 'tt14'], ['GO Rt 780', 'go780'])}. It is replenished by flows from Singur. Thus, <span class="km">when Singur runs low, so does Manjira</span> ${L(['Deccan Chronicle', 'dc47'])}. A government order of March 2026 says that only 70% of the designed quantity is now drawn through its pipelines ${L(['GO Rt 315', 'go315'])}.</p>` },
     { ch: 'source', date: T0, view: 'sat:west', when: '', title: 'The Singur and Manjira lines serve the fast-growing west',
       body: `<p><span class="km">The Singur and Manjira lines serve the city's western, northwestern and northern suburbs</span>, including Patancheru, Miyapur, Kukatpally, Serilingampally and Ameerpet ${L(['Telangana Today', 'tt128'], ['Deccan Chronicle', 'dc47'])}. The map shows the ${D.data.manjira_wards} wards in the west that are named in HMWSSB's shutdown notices for the Manjira lines. A few scattered wards elsewhere are named too.</p>
              <p>Singur is the main source for the city's western IT corridor ${L(['Siasat', 'si1006'])}. A majority of west Hyderabad, including Cyberabad and the Financial District, depends on it ${L(['Deccan Chronicle', 'dc0702'])}. <span class="km">These are the "rapidly growing western parts of the city"</span> ${L(['Times of India', 'toi0613'])}.</p>
              <p>Eenadu reports that <span class="km">nine of the city's 22 constituencies get their water through the Manjira lines</span>, which run through the IT areas and the Financial District in Serilingampally ${L(['Eenadu', 'en1030'])}.</p>` },
     { ch: 'flag', date: T0, view: 'chart:clips', when: '2017 – 2025', title: 'Dam safety concerns, and the risk of a dam break',
-      body: `<p>The storage problem goes back further than the warnings. <span class="km">Singur's level was kept at 517.8 metres until 2017</span>, when the government allowed storage up to 520.5 metres for Mission Bhagiratha. It was later raised to 522 metres, and the review panel said this contributed to the damage ${L(['Telangana Today', 'tt24'])}.</p>
+      body: `<p>The issue of storage goes back further than these warnings. <span class="km">Singur's level was kept at 517.8 metres until 2017</span>, when the government allowed storage up to 520.5 metres for Mission Bhagiratha. It was later raised to 522 metres, and the review panel said this contributed to the damage ${L(['Telangana Today', 'tt24'])}.</p>
              <p>After the 2022 monsoon, all 177 of Telangana's specified dams were inspected by their owners' dam safety units, and the State Dam Safety Organisation evaluated the reports. None of them fell in Category I, "deficiencies which may lead to failure". <span class="km">Eighteen, including Singur, were placed in Category II</span>, "major deficiencies requiring prompt remedial measures". The remaining 159, including Manjira, were in Category III, "minor remedial measures" ${L(['SDSO', 'sdso'])}.</p>
              <p>In March 2025, the State Dam Safety Organisation inspected the Manjira dam and reported a damaged apron and plunge pool below the dam, leaking gates, cracks in several sections including the piers, and large trees on the earth dam ${L(['Telangana Today', 'tt14'])}. The government said the dam was not in serious danger, that there were no cracks in its concrete structure, and that repairs worth Rs 6.5 crore would begin soon ${L(['Telangana Today', 'tt15'])}. A government order of August 2026 says that <span class="km">several blocks of its apron have been displaced or washed away</span> after decades of service and recurring floods ${L(['GO Rt 780', 'go780'])}.</p>
              <p>The review panel warned that <span class="km">a breach at Singur could have catastrophic consequences</span> for Sangareddy, Medak and the villages along the Manjira, and for structures downstream, including the Manjira dam and Nizam Sagar ${L(['Telangana Today', 'tt24'])}. The Deccan Chronicle reported its warning of "huge loss of life" ${L(['Deccan Chronicle', 'dc22'])}.</p>` },
     { ch: 'flag', date: T0, view: 'chart:clips', steps: [{ view: 'chart:clips', date: T0 }, { view: 'tl', date: '2025-03-23' }], when: 'March – June 2025', title: 'A dam safety panel finds Singur\'s earth bank damaged',
       body: `<p>Telangana Today reported that a Dam Safety Review Panel, including two former members of the Central Water Commission, inspected Singur on 23 March 2025. It observed that the revetment of the earth dam had been damaged, <span class="km">which it put down to water being held at 522 metres</span>, and it advised urgent repairs and a limit of 517 metres. The report adds that the committee had visited in 2016, 2019 and 2024, and had recommended immediate repairs ${L(['Telangana Today', 'tt24'])}.</p>
              <p>Other reports date the panel's inspection to June. They say it found several vertical cracks across the earthen bund ${L(['Deccan Chronicle', 'dc22'])}. Telangana Today reported that the National Dam Safety Authority also identified cracks in the parapet wall and the top of the embankment ${L(['Telangana Today', 'tt32'])}.</p>
-             <p>From here on, the picture becomes a timeline, day by day. It shows what each reservoir held, the water flowing in and out each week, and the water people bought by tanker, all in volumes of water.</p>` },
-    { ch: 'flag', date: '2025-08-08', view: 'tl', when: 'August 2025', title: 'The warning reaches the papers, and Singur is capped',
-      body: `<p>The panel's warning reached the newspapers in August, under the headline "May Collapse Anytime" ${L(['Deccan Chronicle', 'dc22'])}. A senior irrigation engineer said there was no immediate threat to the reservoir ${L(['New Indian Express', 'nie26'])}. Even so, <span class="km">storage was restricted to 22 TMC ft, and by 22 August to 16.5 TMC ft</span> ${L(['Telangana Today', 'tt40'])}. Some reports gave the first limit as 20 TMC ft ${L(['New Indian Express', 'nie26'])}.</p>
+             <p>The following timeline shows, day by day, what each reservoir held, the water flowing in and out each week, and the water people bought by tanker, all in volumes of water.</p>` },
+    { ch: 'flag', date: '2025-08-08', view: 'tl', when: 'August 2025', title: 'The panel\'s warning is reported, and Singur is capped',
+      body: `<p>In August, the Deccan Chronicle reported the panel's warning under the headline "May Collapse Anytime" ${L(['Deccan Chronicle', 'dc22'])}. A senior irrigation engineer said there was no immediate threat to the reservoir ${L(['New Indian Express', 'nie26'])}. However, <span class="km">storage was restricted to 22 TMC ft, and by 22 August to 16.5 TMC ft</span> ${L(['Telangana Today', 'tt40'])}. Some reports gave the first limit as 20 TMC ft ${L(['New Indian Express', 'nie26'])}.</p>
              <p>In a letter of 13 August, <span class="km">the National Dam Safety Authority said the stability of the dam was in a "high-risk condition", and warned that the "dam owners" would be held responsible under the Dam Safety Act 2021 if repairs were not taken up</span> ${L(['Deccan Chronicle', 'dc30'])}. Telangana Today reported that the government would need other sources for Hyderabad's drinking water ${L(['Telangana Today', 'tt40'])}.</p>` },
-    { ch: 'events', date: '2025-10-04', view: 'tl', when: 'August – October 2025', title: 'A record inflow is let through',
-      body: `<p>Then came the highest inflow since the dam was commissioned, breaking a record that had stood for 27 years ${L(['Telangana Today', 'tt43'])}. About <b>${Math.round(D.data.inflow_wy['2025'])} TMC ft</b> flowed in over the water year, about eight times what the reservoir can hold ${L(['HMWSSB', 'hmwssb'])}. However, with the cap in place, <span class="km">almost all of it was released downstream</span> through the crest gates, power plants and irrigation channels ${L(['Telangana Today', 'tt43'])}.</p>` },
+    { ch: 'events', date: '2025-10-04', view: 'tl', when: 'August – October 2025', title: 'A record inflow is released downstream',
+      body: `<p>Following this, Singur received the highest inflow since the dam was commissioned, breaking a record that had stood for 27 years ${L(['Telangana Today', 'tt43'])}. About <b>${Math.round(D.data.inflow_wy['2025'])} TMC ft</b> flowed in over the water year, about eight times what the reservoir can hold ${L(['HMWSSB', 'hmwssb'])}. However, with the cap in place, <span class="km">almost all of it was released downstream</span> through the crest gates, power plants and irrigation channels ${L(['Telangana Today', 'tt43'])}.</p>` },
     { ch: 'events', date: '2026-01-10', view: 'tl', when: 'November 2025 – February 2026', title: 'Singur is drawn down by half for repairs',
       body: `<p>In November, irrigation officials decided to empty the reservoir in phases from 1 December, until the damaged revetment was exposed ${L(['Telangana Today', 'tt49'])}, with the water level falling by 30 cm a day ${L(['Deccan Chronicle', 'dc50'])}. <span class="km">There was no ready alternative to Singur's water</span>, though proposals to draw on the Godavari, the Krishna and Mallannasagar were under consideration ${L(['Deccan Chronicle', 'dc46'])}. A letter of 31 December set the first target at 517.5 m, leaving 8.17 TMC ft ${L(['Deccan Chronicle', 'dc62'])}.</p>
              <p>The drawdown began on 10 January ${L(['Telangana Today', 'tt64'])}. Singur held <b>16.6 TMC ft</b> on 1 January ${L(['CWC', 'cwc0101'])} and <b>8.3 TMC ft</b> on 19 February ${L(['CWC', 'cwc0219'])}. Farmers along the canals were told there would be no water for the yasangi crop ${L(['Telangana Today', 'tt60'])}.</p>` },
@@ -1007,30 +1038,31 @@ function cardList() {
     { ch: 'events', date: '2026-06-01', view: 'tl', when: 'May – July 2026', title: 'In May, the west booked more tankers than the rest of the city',
       body: `<p>In May, the ${D.data.manjira_wards} western wards booked <b>${fmt(may[1])}</b> tankers – about ${fmt(ML(may[1]))} million litres, assuming 5,000 litres each – <span class="km">more than the other ${300 - D.data.manjira_wards} wards put together</span>, which booked ${fmt(may[2])} ${L(['Open Data Telangana', 'ogd'])}.</p>
              <p>With water levels receding, the water board installed 17 emergency pumps at the reservoir, 14 to run and three on standby, with operations from 1 June ${L(['Telangana Today', 'ttpump'])}. In July, with Singur holding only about 50 days of water, the water board's managing director called for contingency measures in case the rains were delayed ${L(['The Hindu', 'hindu166'])}.</p>` },
-    { ch: 'events', date: '2026-06-04', view: 'tl', when: 'June 2026', title: 'The monsoon arrives late, and short',
+    { ch: 'events', date: '2026-06-04', view: 'tl', when: 'June 2026', title: 'The monsoon arrives late, with a rainfall deficit',
       body: `<p>The monsoon reached Kerala on 4 June, three days late. By then, IMD had cut its forecast to 90% of normal and put the chance of a deficit or deficient season at 60% ${L(['Down To Earth', 'dte604'])}.</p>
              <p>In the first twelve days, <span class="km">Telangana received 23% less rain than normal</span> ${L(['Telangana Today', 'tt0612'])}.</p>` },
     { ch: 'events', date: '2026-09-21', view: 'chart:rain', when: 'June – October 2026', title: `In Hyderabad, the monsoon brought ${RAIN().dep}% less rain than normal, and October almost none`,
       body: `<p>In Hyderabad, ${RAIN().mon} mm of rain fell between June and September, against a normal of ${RAIN().monN} mm. October, usually still a wet month, brought only ${RAIN().oct} mm against a normal of ${RAIN().octN} mm ${L(['Observatory weather page', 'wx'])}. The Manjira catchment had negligible rain ${L(['Telangana Today', 'tt132'])}.</p>
              <p>Between 1 June and ${fmtDay(D.live.as_of).replace(/ \d{4}$/, '')}, <span class="km">inflows fell at five of the six reservoirs against the same days last year</span>. Singur received <b>${INF('Singur', 2026)} TMC ft</b> against ${INF('Singur', 2025)}, Manjira ${INF('Manjira', 2026)} against ${INF('Manjira', 2025)}, and Yellampally ${INF('Yellampally', 2026)} against ${INF('Yellampally', 2025)}. Only Akkampally received more ${L(['HMWSSB', 'hmwssb'])}.</p>
              <p>Across Telangana, rainfall from June to September was 17% below normal. <span class="km">By 28 October, the state had declared drought in 365 of its 621 mandals</span>. Sangareddy, where Singur stands, had 28 of them, tied with Nalgonda for the highest number ${L(['Rural Voice', 'rv1028'])}.</p>` },
-    { ch: 'events', date: '2026-09-21', view: 'tl', when: 'September – October 2026', title: 'El Niño warnings reach the city\'s water',
-      body: `<p>The press blamed the failed rains on El Niño ${L(['Andhra Jyothy', 'aj149'])}. In September, the Deccan Chronicle reported that Hyderabad may have so far escaped the impact of El Niño, but that this appeared set to change, with Singur slowly hitting rock bottom levels ${L(['Deccan Chronicle', 'dc107'])}. Its reserves might last just another 80 days, and some 3 lakh drinking water connections were expected to face restricted supplies once they ran out ${L(['Deccan Chronicle', 'dc107'])}. In October, the Telugu press warned that a water crisis was closing in on the city ${L(['ETV Bharat', 'etv111'])}.</p>
+    { ch: 'events', date: '2026-09-21', view: 'tl', when: 'September – October 2026', title: 'El Niño warnings for the city\'s water supply',
+      body: `<p>Press reports attributed the poor rainfall to El Niño ${L(['Andhra Jyothy', 'aj149'])}. In September, the Deccan Chronicle reported that Hyderabad may have so far escaped the impact of El Niño, but that this appeared set to change, with Singur "slowly hitting rock bottom levels" ${L(['Deccan Chronicle', 'dc107'])}. Its reserves might last just another 80 days, and about 3 lakh drinking water connections were expected to face restricted supplies once they ran out ${L(['Deccan Chronicle', 'dc107'])}. In October, the Telugu press warned of an impending water crisis in the city ${L(['ETV Bharat', 'etv111'])}.</p>
              <p>Andhra Jyothy reported that Singur water would last until December, and that Krishna and Godavari water would be used if needed. The water board's managing director said drinking water supply faced no difficulty, while environmental experts warned of scarcity for other uses ${L(['Andhra Jyothy', 'aj149'])}.</p>
              <p>In 2018–19 and 2019–20, Singur received meagre inflows and its level touched dead storage. <span class="km">This time, however, it entered the dry year with its storage already restricted and its water released in phases</span> ${L(['Telangana Today', 'tt148'])}.</p>` },
-    { ch: 'events', date: '2026-10-17', view: 'tl', when: 'October 2026', title: 'By October, only a quarter of the bund repairs are done',
+    { ch: 'events', date: '2026-10-17', view: 'tl', when: 'October 2026', title: 'By October, only a quarter of the bund repairs are complete',
       body: `<p>In March, inspectors of the dam safety authority had expressed dissatisfaction with the quality of the work, and warned that the repairs would not be finished at the current pace ${L(['Telangana Today', 'tt75'])}. By October, <span class="km">only 620 m of the 2,416 m of earthen bund taken up for repair had been completed</span>, and the prospect of storing water to the optimum level even during the next monsoon appeared bleak ${L(['Telangana Today', 'tt123'])}.</p>
              <p>In June, irrigation department sources had said that with the repairs incomplete, the 40,000 acres on the canals would get no irrigation water in the vanakalam and yasangi seasons ${L(['Telangana Today', 'tt92'])}.</p>` },
     { ch: 'events', date: '2026-10-22', view: 'sat:today', when: 'October 2026', title: 'Parts of the city report water only once every three or four days',
       body: `<p>Singur and Manjira now supply the city with <b>496 million litres a day instead of 546</b> ${L(['HMWSSB', 'src'])}. NewsMeter reports that the city could face a shortfall of about 227 million litres a day in the coming months ${L(['NewsMeter', 'nm147'])}. In October, the water board decided to cut supply to IIT Hyderabad, BHEL and other organisations by 20–50% ${L(['Telangana Today', 'tt119'])}.</p>
              <p><span class="km">Areas including the Secunderabad Cantonment and the city's outskirts report water once every three or four days</span>, and the water board says it is moving major parts of the city to once every three days ${L(['Siasat', 'si137'])}. Over 20,000 borewells have dried up across Hyderabad and Cyberabad, particularly in the high-rise IT corridors ${L(['Telangana Today', 'tt1015'])}, and gated communities expect tanker costs to push up their maintenance charges ${L(['Times of India', 'toi1027'])}. Eenadu reports that supply from Singur and Manjira now comes once every two days, for 40 to 45 minutes ${L(['Eenadu', 'en1030'])}.</p>
-             <p>On 25 October, the state decided to send Godavari water into the Manjira mains, with the connection being made at Velimela, near the Outer Ring Road ${L(['The Hindu', 'hindu165'])}. The Chief Minister has told officials to step up alternative arrangements ${L(['Eenadu', 'en1030'])}. Eenadu adds that the work on the link to Godavari Phase 1 is under way and, if it is finished within two months, could meet the problem ${L(['Eenadu', 'en1030'])}. That depends on Yellampally, which holds 17.7 of its 20.17 TMC ft, being kept for drinking water alone ${L(['Eenadu', 'en1030'])}.</p>` },
+             <p>On 25 October, the state decided to send Godavari water into the Manjira mains ${L(['The Hindu', 'hindu165'])}. Work is under way at Velimela, near the Outer Ring Road, to connect the 3,000 mm Godavari Ring Main with the 1,200 mm Manjira Phase III and IV mains, and the water board's Technical Director and Chief General Manager, who inspected it that day, told officials to complete it quickly ${L(['Siasat', 'si1025'])}. The Chief Minister has told officials to step up alternative arrangements ${L(['Eenadu', 'en1030'])}. Eenadu adds that the work on the link to Godavari Phase 1 is under way and, if it is finished within two months, could address the problem ${L(['Eenadu', 'en1030'])}. That depends on Yellampally, which holds 17.7 of its 20.17 TMC ft, being kept for drinking water alone ${L(['Eenadu', 'en1030'])}.</p>` },
     { ch: 'events', date: '2026-10-22', view: 'tl', when: 'Next summer', title: 'Singur\'s water may last only until December, about six months before fresh inflows',
       body: `<p>At October's rate of supply, Singur would last until 9 November, and with emergency pumping from its dead storage, until about 10 December ${L(['Deccan Chronicle', 'dc125'])}. Fresh inflows are not expected until next June ${L(['Telangana Today', 'tt119'])}. In June, officials had said that at least 16 TMC ft should be kept aside for the next summer ${L(['Deccan Chronicle', 'dc90'])}. It now holds about 3 TMC ft ${L(['Times of India', 'toi150'])}. <span class="km">Water board officials have told the government that the stocks in Singur and Manjira can be stretched to 60 days at most</span> ${L(['Eenadu', 'en1030'])}.</p>
+             <p>On 29 October, the water board's managing director said that the city could face a deficit of up to 50 million gallons a day, about 227 million litres, between January and August next year. The board expects a shortfall of around 100 million gallons a day from Singur and Manjira, and is working to find 60 million gallons more from the Godavari, the Krishna and Osman Sagar. <span class="km">The remaining deficit could affect around three lakh connections between Patancheru and Narsingi</span> ${L(['Deccan Chronicle', 'dc1029'])}.</p>
              <p>In July, the water board decided to draw an additional 114–136 million litres a day of Mission Bhagiratha water from Mallannasagar ${L(['Times of India', 'toi100'])}. Beyond the city, the state is expected to struggle to supply many towns and large rural areas until the 2027 monsoon ${L(['Deccan Chronicle', 'dc127'])}. With only 620 of the 2,416 metres under repair completed, <span class="km">the prospect of storing water to the optimum level even next monsoon appears bleak</span> ${L(['Telangana Today', 'tt123'])}.</p>` },
-    { ch: 'live', date: '2026-10-22', view: 'chart:tanks', when: '', title: 'Follow the current status on the Observatory\'s live pages',
-      body: `<p>The figures in this story stop in October 2026, but the situation is still changing. These pages keep following it:</p>
-             <ul class="livelinks"><li><a href="https://hyderabad.urbanobservatory.in/live/reservoirs/" target="_blank" rel="noopener">Reservoirs</a> how full each reservoir is, against last year and the average, and the water drawn from each source</li><li><a href="https://hyderabad.urbanobservatory.in/live/tankers/" target="_blank" rel="noopener">Tankers</a> water tanker bookings across the city</li><li><a href="https://hyderabad.urbanobservatory.in/live/weather/" target="_blank" rel="noopener">Weather and air</a> rain against the IMD normal, station by station</li></ul>` },
+    { ch: 'live', date: '2026-10-22', view: 'chart:inflows', when: '', title: 'Follow the current status on the Observatory\'s live pages',
+      body: `<p>While the figures in this story end in October 2026, the situation continues to change. These pages follow it:</p>
+             <ul class="livelinks"><li><a href="https://hyderabad.urbanobservatory.in/live/reservoirs/" target="_blank" rel="noopener">Reservoirs</a> how full each reservoir is, against last year and the average, the inflows, and the water drawn from each source</li><li><a href="https://hyderabad.urbanobservatory.in/live/tankers/" target="_blank" rel="noopener">Tankers</a> water tanker bookings across the city</li><li><a href="https://hyderabad.urbanobservatory.in/live/weather/" target="_blank" rel="noopener">Weather and air</a> rain against the IMD normal, station by station</li></ul>` },
   ];
 }
 let CARDS = [];
@@ -1041,7 +1073,7 @@ function keyFor() { return ''; }
 function buildCards() {
   CARDS = cardList();
   const titleCard = `<article class="scard title" data-i="0"><h1>Too risky to fill, now too dry to supply</h1><p class="stand">Two dams give Hyderabad a fifth of its water. In 2025, engineers warned that one of them could break, so it was capped and then drawn down for repairs. Then came a dry El Niño year. A disaster in the making.</p><div class="meta"><b>Teja Malladi</b><span>30 October 2026</span></div><div class="hint">Scroll <span class="arr" aria-hidden="true">↓</span></div></article>`;
-  const refs = new Map(), LATE = ['toi1006', 'si1006', 'dc0702', 'toi0613', 'tt1015', 'toi1027', 'en1030'].map(k => U[k]);
+  const refs = new Map(), LATE = ['toi1006', 'si1006', 'dc0702', 'toi0613', 'tt1015', 'toi1027', 'en1030', 'si1025', 'dc1029'].map(k => U[k]);
   const allToks = CARDS.map(c => (c.body || '')).join('').matchAll(/\u27e6(.*?)\u27e7/g);
   const later = [];
   for (const m of allToks) for (const x of m[1].split('\u2016')) { const [url, name] = x.split('|'); if (LATE.includes(url)) { if (!later.some(l => l[0] === url)) later.push([url, name]); } else if (!refs.has(url)) refs.set(url, { n: refs.size + 1, name }); }
@@ -1064,7 +1096,7 @@ function buildArticle() {
       if (kind === 'tl') drawTimeline(q.date);
       const f = copy('v-' + kind);
       if (kind === 'sat') { const v = f.querySelector('[data-was="sat"]'); v.style.cssText = ''; v.classList.add('m-sat'); }
-      if (kind === 'chart' && mode !== 'tanks' && mode !== 'clips') {
+      if (kind === 'chart' && mode !== 'tanks' && mode !== 'inflows' && mode !== 'clips') {
         const v = f.querySelector('[data-was="vchart"]'), w = document.createElement('div');
         w.className = 'm-swipe'; v.parentNode.insertBefore(w, v); w.appendChild(v); v.classList.add('m-chart');
         w.insertAdjacentHTML('afterend', '<div class="m-hint">Swipe sideways to see all of it</div>');
@@ -1072,7 +1104,7 @@ function buildArticle() {
         f.querySelector('[data-was="tanks"]')?.remove(); f.querySelector('[data-was="clips"]')?.remove();
       } else if (kind === 'chart') {
         f.querySelector('[data-was="vchart"]')?.remove();
-        f.querySelector(mode === 'tanks' ? '[data-was="clips"]' : '[data-was="tanks"]')?.remove();
+        f.querySelector(mode === 'clips' ? '[data-was="tanks"]' : '[data-was="clips"]')?.remove();
       }
       if (kind === 'tl') {
         const v = f.querySelector('[data-was="tl"]'), a = f.querySelector('[data-was="tl-axis"]'), w = document.createElement('div');
