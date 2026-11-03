@@ -23,6 +23,13 @@ const CARDS = [
   {
     themes: ['WATER'],
     themeLabel: 'WATER',
+    title: 'Which river reaches which part of Hyderabad',
+    href: `${import.meta.env.BASE_URL}supply-lines/`,
+    description: "HMWSSB's shutdown notices name the supply line being repaired and the areas that lose water. From the notices since 2022, 222 places mapped by the line that reaches them.",
+  },
+  {
+    themes: ['WATER'],
+    themeLabel: 'WATER',
     title: 'Too risky to fill, now too dry to supply',
     href: `${import.meta.env.BASE_URL}singur-manjira/`,
     description: 'Two dams give Hyderabad a fifth of its water. In 2025, engineers warned that one of them could break, so it was capped and then drawn down for repairs. Then came a dry El Niño year.',

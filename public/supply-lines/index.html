@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which river reaches which part of Hyderabad · Hyderabad Urban Observatory</title>
+<meta name="description" content="HMWSSB&#x27;s shutdown notices name the supply line and the areas that lose water. 222 places, mapped by the line that reaches them.">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Hyderabad Urban Observatory">
+<meta property="og:title" content="Which river reaches which part of Hyderabad">
+<meta property="og:description" content="HMWSSB&#x27;s shutdown notices name the supply line and the areas that lose water. 222 places, mapped by the line that reaches them.">
+<meta property="og:url" content="https://hyderabad.urbanobservatory.in/stories/supply-lines/">
+<script defer src="https://stats.urbanobservatory.in/script.js" data-website-id="97294034-f2a4-4fdb-8653-d5d95d2cf8a7"></script>
+<script src="https://api.urbanobservatory.in/visits.js" defer></script>
+<link rel="stylesheet" href="../fonts/lato.css">
+<link rel="stylesheet" href="../fonts/outfit.css">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+:root{--surface:#fff;--band:#FAFAFB;--r-card:4px;--r-ctl:4px;--font-ui:Lato,'Helvetica Neue',Arial,sans-serif;--font-brand:Outfit,Lato,sans-serif;--border:#E5E7EB;--border-2:#D1D5DB;--ink:#111827;--text-2:#374151;--muted:#6B7280;--water:#185FA5;--water-2:#7FA6CE;--red:#CE261E}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--ink);font:400 16px/1.6 Lato,system-ui,sans-serif}
+a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--border-2);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--ink)}
+header.bar{height:64px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 48px;position:sticky;top:0;z-index:10;background:#fff}
+.eyebrow{font:900 11px Lato;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.intro{max-width:1104px;margin:0 auto;padding:44px 48px 18px}
+h1{font:700 32px/1.2 Lato;letter-spacing:-.005em;margin:8px 0 10px;max-width:820px}
+.stand{font-size:18px;line-height:1.55;color:var(--text-2);margin:0;max-width:720px}
+.fig{max-width:1104px;margin:20px auto 0;padding:0 48px}
+.fig .ct{font:700 18px/1.3 Lato;margin:0;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.fig .cs{font-size:13px;color:var(--muted);margin:6px 0 12px}
+.ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.ctl .lab{font-size:12.5px;color:var(--muted)}
+.tabs{display:inline-flex;gap:2px;padding:2px;border:1px solid var(--border);border-radius:4px;flex-wrap:wrap}
+.tabs button{font:400 13.5px/1 Lato;padding:7px 12px;border:0;border-radius:3px;background:none;color:var(--text-2);cursor:pointer}
+.tabs button:hover{background:#F3F4F6}.tabs button.on{background:#E4EDF6;color:var(--ink);font-weight:700}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:20px}
+#map{height:min(680px,78vh);border:1px solid var(--border);border-radius:4px}
+.side h3{margin:0 0 8px;font:900 11px/1.2 Lato;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.key{font-size:13.5px;color:var(--text-2);display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.key span{display:flex;align-items:center;gap:8px}.key b{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--ink)}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none}
+#detail{font-size:13.5px;line-height:1.55;color:var(--text-2)}
+#detail .pn{font:700 16px/1.3 Lato;color:var(--ink);margin-bottom:4px}
+#detail .ln{margin-top:6px}
+#detail a{color:var(--text-2)}
+.foot{margin-top:12px;padding-top:8px;border-top:1px solid var(--border);font-size:11.5px;line-height:1.55;color:var(--muted)}
+.prose{max-width:776px;margin:0 auto;padding:44px 48px 0}
+.prose::before{content:'';display:block;width:240px;border-top:1px solid var(--ink);margin-bottom:22px}
+.prose h2{font:700 20px/1.3 Lato;margin:0 0 10px}
+.prose p,.prose li{font-size:17px;line-height:1.7;color:var(--text-2)}
+.prose ul{padding-left:20px;margin:0}.prose li{margin:0 0 8px}
+.refs ol{list-style:none;margin:14px 0 0;padding:0}
+.refs li{display:grid;grid-template-columns:34px minmax(0,1fr);font-size:13.5px;line-height:1.5;color:var(--text-2);padding:6px 8px;margin:0 -8px 2px;border-radius:4px;scroll-margin-top:84px}
+.refs li:target{background:#E4EDF6}
+.refs li .n{color:var(--muted);font-variant-numeric:tabular-nums}
+.refs li b{color:var(--ink);font-weight:700}
+.refs li a{color:var(--text-2)}
+.refs>p{font-size:13px!important;color:var(--muted)!important;margin:0}
+.maplibregl-popup-content{font:13px/1.45 Lato;color:var(--text-2);padding:8px 10px;border-radius:4px;border:1px solid var(--border-2);box-shadow:none}
+.maplibregl-popup-content b{color:var(--ink)}
+@media (max-width:820px){.wrap{grid-template-columns:minmax(0,1fr)}#map{height:480px}.intro,.fig,.prose{padding-left:16px;padding-right:16px}header.bar{padding:0 16px}h1{font-size:26px}}
+.obs-brand { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; min-width: 0; }
+.obs-logo { display: block; width: 36px; height: 36px; flex: none; }
+.obs-word { font: 400 13.5px/1 var(--font-brand); letter-spacing: .18em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.obs-nav { display: none; align-self: stretch; gap: 28px; }
+.obs-nav a { display: flex; align-items: center; padding-top: 2px; font: 400 15px/1 var(--font-ui); color: var(--text-2); text-decoration: none; border-bottom: 2px solid transparent; }
+.obs-nav a:hover { color: var(--ink); }
+.obs-nav a[aria-current="page"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--ink); }
+.obs-burger { display: grid; place-items: center; width: 36px; height: 36px; border: 0; background: none; color: var(--ink); cursor: pointer; padding: 0; }
+.obs-burger span { display: block; width: 20px; height: 1.5px; background: currentColor; box-shadow: 0 -6px 0 currentColor, 0 6px 0 currentColor; }
+.obs-burger[aria-expanded="true"] span { box-shadow: none; background: none; position: relative; }
+.obs-burger[aria-expanded="true"] span::before, .obs-burger[aria-expanded="true"] span::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1.5px; background: currentColor; }
+.obs-burger[aria-expanded="true"] span::before { transform: rotate(45deg); }
+.obs-burger[aria-expanded="true"] span::after { transform: rotate(-45deg); }
+.obs-menu { position: absolute; right: 16px; top: 60px; min-width: 200px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); padding: 6px; display: grid; }
+.obs-menu a { padding: 11px 12px; border-radius: var(--r-ctl); font: 400 15px/1 var(--font-ui); color: var(--text-2); text-decoration: none; }
+.obs-menu a:hover { background: var(--band); color: var(--ink); }
+.obs-menu a[aria-current="page"] { color: var(--ink); font-weight: 900; }
+/* five links fit from 1024 px; below that they fold into the burger */
+@media (min-width: 1024px) {
+  .obs-nav { display: flex; }
+  .obs-burger, .obs-menu { display: none; }
+}
+.obs-nav a { white-space: nowrap; }
+.obs-footer { margin: 56px 0 0; padding: 16px 24px 18px; border-top: 1px solid var(--border); background: var(--surface); }
+@media (min-width: 768px) { .obs-footer { margin: 72px 0 0; padding: 18px 48px 20px; } }
+.obs-footer-fine { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 24px; font-size: 12.5px; line-height: 1.5; color: var(--muted); }
+.obs-footer-fine > span { flex: 1 1 520px; max-width: 1200px; }
+.obs-footer-fine a { color: var(--text-2); text-decoration: underline; text-decoration-color: var(--border-2); text-underline-offset: 2px; }
+.obs-footer-fine a.obs-footer-disclaimer { font: 700 13.5px/1.2 var(--font-ui); color: var(--ink); text-decoration: none; white-space: nowrap; }
+.obs-footer-fine a.obs-footer-disclaimer:hover { text-decoration: underline; }
+@media (max-width: 767px) { .obs-footer-sep { display: none; } .obs-footer-fine > span { display: grid; gap: 4px; } }
+@media (max-width: 420px) { .obs-word { font-size: 10.5px; letter-spacing: .08em; } .obs-logo { width: 28px; height: 28px; } .obs-brand { gap: 8px; } .obs-header { gap: 8px; } .obs-live-bar { font-size: 13.5px; } }   /* room for Live beside the burger */
+.obs-live { display: inline-flex; align-items: center; gap: 6px; }
+.obs-live-dot { position: relative; width: 7px; height: 7px; border-radius: 50%; background: #4A9447; flex: none; }
+.obs-live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #4A9447; animation: obs-live-pulse 1.8s ease-out infinite; }
+@keyframes obs-live-pulse { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(2.8); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .obs-live-dot::after { animation: none; } }
+/* below 1024 px the links fold into the burger; Live stays in the bar, just before it */
+.obs-live-bar { margin-left: auto; font: 700 14px/1 var(--font-ui); color: var(--ink); text-decoration: none; white-space: nowrap; flex: none; }
+.obs-header .obs-live-bar + .obs-burger { margin-left: -4px; }
+@media (min-width: 1024px) { .obs-live-bar { display: none; } }
+.obs-menu[hidden]{display:none}
+header.bar{justify-content:space-between;gap:16px}
+</style>
+</head>
+<body>
+<header class="bar obs-header"><a href="https://hyderabad.urbanobservatory.in" class="obs-brand" aria-label="Hyderabad Urban Observatory, home"><span class="obs-logo"><svg viewBox="0 0 100 100" style="width:100%;height:100%"> <defs> <rect id="logo-bar-H1" x="2" y="26" width="96" height="16" rx="6" /> <rect id="logo-bar-H2" x="2" y="58" width="96" height="16" rx="6" /> <rect id="logo-bar-V1" x="28" y="2" width="16" height="96" rx="6" transform="rotate(18 36 50)" /> <rect id="logo-bar-V2" x="56" y="2" width="16" height="96" rx="6" transform="rotate(18 64 50)" /> <mask id="logo-cut-H1"> <rect width="100" height="100" fill="white" /> <use href="#logo-bar-V1" fill="black" stroke="black" stroke-width="4" /> </mask> <mask id="logo-cut-V2"> <rect width="100" height="100" fill="white" /> <use href="#logo-bar-H1" fill="black" stroke="black" stroke-width="4" /> </mask> <mask id="logo-cut-H2"> <rect width="100" height="100" fill="white" /> <use href="#logo-bar-V2" fill="black" stroke="black" stroke-width="4" /> </mask> <mask id="logo-cut-V1"> <rect width="100" height="100" fill="white" /> <use href="#logo-bar-H2" fill="black" stroke="black" stroke-width="4" /> </mask> </defs> <g fill="#FFFFFF" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <use href="#logo-bar-H1" mask="url(#logo-cut-H1)" /> <use href="#logo-bar-V2" mask="url(#logo-cut-V2)" /> <use href="#logo-bar-H2" mask="url(#logo-cut-H2)" /> <use href="#logo-bar-V1" mask="url(#logo-cut-V1)" /> </g> </svg></span><span class="obs-word">Hyderabad Urban Observatory</span></a><nav class="obs-nav" aria-label="Observatory"><a href="https://hyderabad.urbanobservatory.in/live/" class="obs-live"><i class="obs-live-dot" aria-hidden="true"></i>Live</a><a href="https://hyderabad.urbanobservatory.in/maps/">Layers</a><a href="https://hyderabad.urbanobservatory.in/tools/">Tools</a><a href="https://hyderabad.urbanobservatory.in/stories/" aria-current="page">Stories</a><a href="https://hyderabad.urbanobservatory.in/data/">Data sources</a><a href="https://hyderabad.urbanobservatory.in/about">About</a></nav><a href="https://hyderabad.urbanobservatory.in/live/" class="obs-live obs-live-bar"><i class="obs-live-dot" aria-hidden="true"></i>Live</a><button type="button" class="obs-burger" aria-label="Menu" aria-expanded="false" aria-controls="obs-menu"><span></span></button><nav class="obs-menu" id="obs-menu" aria-label="Observatory" hidden><a href="https://hyderabad.urbanobservatory.in/live/" class="obs-live"><i class="obs-live-dot" aria-hidden="true"></i>Live</a><a href="https://hyderabad.urbanobservatory.in/maps/">Layers</a><a href="https://hyderabad.urbanobservatory.in/tools/">Tools</a><a href="https://hyderabad.urbanobservatory.in/stories/" aria-current="page">Stories</a><a href="https://hyderabad.urbanobservatory.in/data/">Data sources</a><a href="https://hyderabad.urbanobservatory.in/about">About</a></nav></header>
+<div class="intro">
+  <div class="eyebrow">Water · HMWSSB area</div>
+  <h1>Which river reaches which part of Hyderabad</h1>
+  <p class="stand">When HMWSSB shuts one of its supply lines for repairs, the news reports which areas will lose water. We read 78 such notices, from April 2022 to November 2026, and mapped the places they name by the line that was shut.</p>
+</div>
+
+<figure class="fig">
+  <h2 class="ct">Places that lost water when each supply line was shut, 2022–2026</h2>
+  <p class="cs">Places named in HMWSSB shutdown notices, by the line the notice names · HMWSSB area · 11 Apr 2022 to 3 Nov 2026</p>
+  <div class="ctl"><span class="lab">Line</span><div class="tabs" id="src"><button data-v="all" class="on">All</button><button data-v="Krishna">Krishna</button><button data-v="Godavari">Godavari</button><button data-v="Manjira">Manjira</button><button data-v="Twin lakes">Twin lakes</button><button data-v="tie">Equal on two</button></div></div>
+  <div class="wrap">
+    <div id="map" role="img" aria-label="Map of 222 places in Hyderabad coloured by the supply line that reaches them"></div>
+    <div class="side">
+      <h3>Places</h3>
+      <div class="key" id="key"></div>
+      <h3>Selected place</h3>
+      <div id="detail">Click a point to see the notices that name it.</div>
+    </div>
+  </div>
+  <p class="foot">Colour is the line that cut the place in the most notices; a ring in a second colour means two lines did so equally often. Bigger points are named in more notices. Manjira includes Singur; the twin lakes are Osman Sagar and Himayat Sagar. Points are approximate.<br>Source: HMWSSB shutdown notices as reported by Telangana Today, Siasat, Deccan Chronicle, The South First, The Hans India (listed below) – Hyderabad Urban Observatory</p>
+</figure>
+
+<section class="prose">
+  <h2>How we made this</h2>
+  <ul>
+    <li>We collected 78 HMWSSB shutdown notices from the news. 54 of them name the line being worked on, and only these are used. One exception: the notice for the Asif Nagar filter beds in May 2026 counts as Osman Sagar, because 20 of its 21 areas are those of the Osman Sagar conduit notice of November 2026.</li>
+    <li>The area names were cleaned and their spellings joined, so Autonagar and Auto Nagar are one place. Where one name is used for two places, the areas listed beside it in each notice decide which one is meant, as with Bharat Nagar and Gautam Nagar.</li>
+    <li>A place is shown on a line when at least two notices cut its supply on that line. For the twin lakes, which are rarely shut, one notice is enough. Areas listed only at low pressure are not counted.</li>
+    <li>A place named on two lines takes the one named more often. Four places are named equally often on two lines.</li>
+    <li>The places were geocoded, so the points are approximate.</li>
+    <li>A notice shows where a line reached on the day of the work. HMWSSB moves water between lines, so a place may get water from more than one.</li>
+  </ul>
+</section>
+
+<section class="prose refs" id="sources">
+  <h2>Sources</h2>
+  <p>The 54 notices behind the map, in order of the work date. The numbers are those shown for each place.</p>
+  <ol id="reflist"></ol>
+</section>
+
+<footer class="obs-footer"><div class="obs-footer-fine"><span>This website is under continuous development; you may find errors or incomplete content. Feedback: <a href="mailto:hulf.observatory@gmail.com">hulf.observatory@gmail.com</a><span class="obs-footer-sep"> · </span>Processing and metadata CC BY 4.0; each layer keeps its source's licence.</span><a class="obs-footer-disclaimer" href="https://hyderabad.urbanobservatory.in/disclaimer">Disclaimer</a></div></footer>
+<script>(function(){var b=document.querySelector('.obs-burger'),m=document.getElementById('obs-menu');function set(o){b.setAttribute('aria-expanded',o);m.hidden=!o}b.addEventListener('click',function(){set(b.getAttribute('aria-expanded')!=='true')});addEventListener('keydown',function(e){if(e.key==='Escape')set(false)});document.addEventListener('pointerdown',function(e){if(!b.contains(e.target)&&!m.contains(e.target))set(false)})})();</script>
+<script>
+const COL={Krishna:'#185FA5',Godavari:'#2E8B7A',Manjira:'#8E5AA8','Twin lakes':'#D9772B'},SRC=Object.keys(COL);
+const colorOf=k=>['match',['get',k],'Krishna',COL.Krishna,'Godavari',COL.Godavari,'Manjira',COL.Manjira,'Twin lakes',COL['Twin lakes'],'rgba(0,0,0,0)'];
+const fmt=d=>new Date(d+'T00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+let P=[],src='all';
+const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:[78.47,17.42],zoom:10.1,minZoom:8,maxBounds:[77.1,15.7,81.5,20.05],cooperativeGestures:matchMedia('(pointer:coarse)').matches,attributionControl:{compact:true}});
+map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right');
+function filt(){if(src==='all')return null;if(src==='tie')return['!=',['get','second'],''];return['any',['==',['get','main'],src],['==',['get','second'],src]];}
+function render(){
+  const f=filt();['ring','pts','lbl'].forEach(id=>map.setFilter(id,f));
+  document.getElementById('key').innerHTML=SRC.map(s=>`<span><i class="dot" style="background:${COL[s]}"></i>${s}<b>${P.filter(p=>p.main===s).length}</b></span>`).join('')
+   +`<span><i class="dot" style="background:#fff;border:2.5px solid #8E5AA8"></i>equal on two lines<b>${P.filter(p=>p.second).length}</b></span>`;
+}
+function show(p){
+  const L=JSON.parse(p.lines);
+  document.getElementById('detail').innerHTML=`<div class="pn">${esc(p.name)}</div>`+L.map(([s,ns])=>`<div class="ln"><i class="dot" style="background:${COL[s]};width:9px;height:9px;margin-right:6px"></i><b>${s}</b>, ${ns.length} notice${ns.length>1?'s':''}: `+ns.map(n=>`<a href="#s${n}">${n}</a>`).join(', ')+'</div>').join('');
+}
+fetch('data.json').then(r=>r.json()).then(d=>{
+  document.getElementById('reflist').innerHTML=d.sources.map(s=>`<li id="s${s.n}"><span class="n">${s.n}</span><span><b>${fmt(s.date)}</b> · ${esc(s.line)} · ${esc(s.what)}. <a href="${esc(s.url)}">${esc(s.outlet)}</a></span></li>`).join('');
+  const g={type:'FeatureCollection',features:d.places.map(p=>({type:'Feature',geometry:{type:'Point',coordinates:[p.lon,p.lat]},properties:{name:p.name,main:p.main,second:p.second,n:new Set(p.lines.flatMap(l=>l[1])).size,lines:JSON.stringify(p.lines)}}))};
+  P=d.places;
+  const go=()=>{
+    // fit the city on any screen: the middle 94% of points, so a few far off-takes (Gajwel, Aler) do not shrink it
+    const q=(a,t)=>{a=[...a].sort((x,y)=>x-y);return a[Math.floor(t*(a.length-1))];};
+    const la=d.places.map(p=>p.lat),lo=d.places.map(p=>p.lon);
+    map.fitBounds([[q(lo,.03),q(la,.03)],[q(lo,.97),q(la,.97)]],{padding:16,duration:0});
+    map.addSource('p',{type:'geojson',data:g});
+    const r=['interpolate',['linear'],['get','n'],1,4,5,6.5,15,10];
+    map.addLayer({id:'ring',type:'circle',source:'p',paint:{'circle-radius':['+',r,2.5],'circle-color':colorOf('second')}});
+    map.addLayer({id:'pts',type:'circle',source:'p',paint:{'circle-radius':r,'circle-color':colorOf('main'),'circle-opacity':.92,'circle-stroke-color':'#fff','circle-stroke-width':.8}});
+    map.addLayer({id:'lbl',type:'symbol',source:'p',minzoom:12.5,layout:{'text-field':['get','name'],'text-font':['Noto Sans Regular'],'text-size':11,'text-offset':[0,1.1],'text-anchor':'top'},paint:{'text-color':'#374151','text-halo-color':'#fff','text-halo-width':1.5}});
+    const pop=new maplibregl.Popup({closeButton:false,closeOnClick:false,offset:8});
+    map.on('mousemove','pts',e=>{map.getCanvas().style.cursor='pointer';const p=e.features[0].properties;pop.setLngLat(e.lngLat).setHTML(`<b>${esc(p.name)}</b><br>`+JSON.parse(p.lines).map(([s,ns])=>`${s} ${ns.length}`).join(', ')).addTo(map);});
+    map.on('mouseleave','pts',()=>{map.getCanvas().style.cursor='';pop.remove();});
+    map.on('click','pts',e=>show(e.features[0].properties));
+    render();
+  };
+  map.loaded()?go():map.on('load',go);
+});
+document.getElementById('src').onclick=e=>{const b=e.target.closest('button');if(!b)return;src=b.dataset.v;[...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));render();};
+</script>
+</body>
+</html>
