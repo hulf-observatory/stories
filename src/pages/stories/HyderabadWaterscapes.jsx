@@ -78,7 +78,7 @@ export default function HyderabadWaterscapes() {
           <a href={TIMELINE_URL} rel="noopener" className="home-action">
             Open City Timeline
             <svg className="home-action-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1.5" d="M5 19L19 5M19 5H5M19 5V19" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 17 17 7M8 7h9v9" />
             </svg>
           </a>
         </div>
