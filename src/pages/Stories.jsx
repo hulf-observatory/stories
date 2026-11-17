@@ -140,10 +140,10 @@ export default function Stories() {
             {!card.comingSoon && (
               <p style={{ marginTop: 16 }}>
                 {card.href ? (
-                  <a href={card.href} style={{ fontWeight: 500 }}>Click here to explore &rarr;</a>
+                  <a href={card.href} style={{ fontWeight: 500 }}>Explore<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ marginLeft: 6, verticalAlign: -2 }}><path d="M7 17 17 7M8 7h9v9" /></svg></a>
                 ) : (
                   <Link to={card.link} style={{ fontWeight: 500 }}>
-                    Click here to explore &rarr;
+                    Explore<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ marginLeft: 6, verticalAlign: -2 }}><path d="M7 17 17 7M8 7h9v9" /></svg>
                   </Link>
                 )}
               </p>
