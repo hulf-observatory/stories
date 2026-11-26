@@ -23,7 +23,7 @@ const CARDS = [
   {
     themes: ['ACCESSIBILITY'],
     themeLabel: 'ACCESSIBILITY & MOBILITY',
-    title: 'Our panels at Cyberabad Moves',
+    title: 'Walking to transit in Hyderabad',
     href: `${import.meta.env.BASE_URL}cyberabad-moves/`,
     description: 'Two panels for the Cyberabad Moves exhibition at T-Hub, 26–28 November 2026: how far people walk to a bus, Metro or MMTS stop, and how comfortable that walk is. And how you can help build open data for Hyderabad.',
   },
